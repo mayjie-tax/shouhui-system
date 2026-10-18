@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>外汇管理局数字外管平台（ASOne）· 教学实训系统</title>
+  <style>
+/* ============================================================
+ * styles.css —— 外汇收汇申报教学实训系统
+ * 仿 ASOne 数字外管平台风格 v5（逐像素对齐真实截图）
+ * ============================================================ */
+:root {
+  --c-header: #0077AA;
+  --c-header-dark: #005a82;
+  --c-tab-active: #0077AA;
+  --c-tab-bg: #f5f7fa;
+  --c-tab-border: #d5dde6;
+  --c-sidebar: #f7f9fc;
+  --c-sidebar-border: #c8d4e0;
+  --c-tree-line: #a8b8c8;
+  --c-tree-hover: #e6f0f8;
+  --c-tree-active-bg: #0099CC;       /* 选中项：蓝色底（截图一致） */
+  --c-tree-active-text: #fff;        /* 选中项：白字 */
+  --c-tree-text: #333;
+  --c-tree-muted: #555;
+  --c-tree-parent-color: #006699;
+  --c-tree-arrow: #666;
+  --c-main-bg: #f0f2f5;
+  --c-main: #ffffff;
+  --c-border: #ddd;
+  --c-table-border: #dde4ec;
+  --c-text: #222;
+  --c-muted: #777;
+  --c-primary: #0077AA;
+  --c-primary-soft: #eaf4fa;
+  --c-accent: #0f8a6d;
+  --c-warn: #c9760a;
+  --c-warn-soft: #fdf2e0;
+  --c-danger: #c0392b;
+  --c-danger-soft: #fbe9e7;
+  --c-ok: #1f9d57;
+  --c-ok-soft: #e6f6ec;
+  --c-pending: #b8860b;
+  --c-pending-soft: #fbf3df;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; }
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", system-ui, sans-serif;
+  background: var(--c-main-bg);
+  color: var(--c-text);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ============================================================
+ * ASOne 风格顶栏
+ * ============================================================ */
+.topbar {
+  background: var(--c-header);
+  color: #fff;
+  padding: 0 20px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  flex-shrink: 0;
+}
+.topbar .brand { display: flex; align-items: center; gap: 10px; }
+.topbar .brand .safe-logo {
+  background: rgba(255,255,255,.22); border-radius: 50%;
+  width: 32px; height: 32px;
+  display: grid; place-items: center; font-size: 13px; font-weight: 800;
+  flex-shrink: 0; letter-spacing: -0.5px;
+}
+.topbar .brand .title-group { display: flex; flex-direction: column; gap: 1px; }
+.topbar .brand .platform-name {
+  font-size: 15px; font-weight: 700; letter-spacing: .5px;
+}
+.topbar .brand .sub-title {
+  font-size: 11px; opacity: .82; letter-spacing: .3px;
+}
+.topbar .userbox { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+.topbar .userbox .user-info { text-align: right; line-height: 1.35; }
+.topbar .userbox .ver-badge {
+  display: inline-block; margin-top: 2px; padding: 0 6px; border-radius: 8px;
+  background: rgba(255,255,255,.22); color: #fff; font-size: 11px; font-weight: 600;
+}
+.topbar .userbox .user-role {
+  font-size: 11px; opacity: .75;
+}
+.topbar .btn-ghost {
+  background: rgba(255,255,255,.18); color: #fff; border: 1px solid rgba(255,255,255,.35);
+  padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;
+}
+.topbar .btn-ghost:hover { background: rgba(255,255,255,.32); }
+
+/* 用户图标按钮（蓝色圆形+人形图标） */
+.user-icon-btn {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(255,255,255,.25); color: #fff;
+  display: grid; place-items: center; font-size: 16px; cursor: pointer;
+  border: none; flex-shrink: 0;
+}
+.user-icon-btn:hover { background: rgba(255,255,255,.4); }
+
+/* 用户菜单（导出/导入/重置/退出） */
+.user-menu-wrap { position: relative; flex-shrink: 0; }
+.user-menu {
+  position: absolute; right: 0; top: 38px; min-width: 160px;
+  background: #fff; color: #333; border: 1px solid #e3e8f0; border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(20,40,80,.16); padding: 6px; z-index: 60;
+}
+.um-item { padding: 9px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; white-space: nowrap; }
+.um-item:hover { background: #f0f4fa; }
+.um-item.um-danger { color: #d4380d; }
+.um-item.um-danger:hover { background: #fff1f0; }
+
+/* 已保存状态指示 */
+.user-info .ui-name { font-weight: 600; }
+.user-info .ui-save { font-size: 11px; color: #c8e6c9; margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+.user-info .ui-save .dot { width: 7px; height: 7px; border-radius: 50%; background: #52c41a; box-shadow: 0 0 0 2px rgba(82,196,26,.25); }
+.user-info .ui-save.saved .dot { background: #ffd666; }
+
+/* 顶部存储警告条 */
+.store-warn {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+  background: #fff1f0; color: #a8071a; border-bottom: 1px solid #ffccc7;
+  padding: 8px 16px; font-size: 13px; text-align: center;
+}
+
+/* 轻量提示条 */
+.fx-toast {
+  position: fixed; left: 50%; bottom: 38px; transform: translateX(-50%) translateY(20px);
+  background: #1f2d3d; color: #fff; padding: 10px 18px; border-radius: 8px;
+  font-size: 13px; opacity: 0; pointer-events: none; transition: .25s; z-index: 1000;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+.fx-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ============================================================
+ * 标签页导航栏
+ * ============================================================ */
+.tab-bar {
+  background: var(--c-tab-bg);
+  border-bottom: 1px solid var(--c-tab-border);
+  display: flex;
+  align-items: stretch;
+  padding-left: 16px;
+  position: sticky;
+  top: 52px;
+  z-index: 25;
+  flex-shrink: 0;
+}
+.tab-item {
+  padding: 10px 24px; font-size: 14px; font-weight: 600; cursor: pointer;
+  color: var(--c-tree-text); border: none; background: none;
+  border-bottom: 3px solid transparent; transition: all .15s;
+  position: relative;
+}
+.tab-item:hover { background: rgba(0,153,204,.06); }
+.tab-item.active {
+  color: #fff; background: var(--c-tab-active); border-bottom-color: var(--c-header-dark);
+}
+
+/* ============================================================
+ * 主布局
+ * ============================================================ */
+.layout { display: flex; flex: 1; min-height: 0; }
+
+/* ============================================================
+ * 左侧树形侧栏 —— 对齐真实 ASOne 截图
+ * ============================================================ */
+.sidebar {
+  width: 230px; background: var(--c-sidebar); border-right: 1px solid var(--c-sidebar-border);
+  flex-shrink: 0; overflow-y: auto; overflow-x: hidden;
+  padding: 8px 0 16px;
+}
+
+/* 搜索框 */
+.sidebar-search { margin: 0 10px 10px; position: relative; }
+.sidebar-search input {
+  width: 100%; border: 1px solid var(--c-tab-border); border-radius: 4px;
+  padding: 6px 10px 6px 28px; font-size: 13px; outline: none;
+  background: #fff;
+}
+.sidebar-search input:focus { border-color: var(--c-primary); }
+.sidebar-search::before {
+  content: '📄';
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  font-size: 13px; pointer-events: none;
+}
+
+/* 树节点容器 */
+.tree-node { user-select: none; }
+
+/* 父节点（分组标题） */
+.tree-parent {
+  display: flex; align-items: center; padding: 8px 10px; cursor: pointer;
+  font-size: 14px; font-weight: 600; color: var(--c-tree-parent-color); gap: 5px;
+  line-height: 1.4;
+}
+.tree-parent:hover { background: var(--c-tree-hover); }
+.tree-parent .arrow {
+  width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center;
+  color: var(--c-tree-arrow); font-size: 11px; flex-shrink: 0;
+  line-height: 1;
+}
+
+/* 子项容器 */
+.tree-children { display: none; position: relative; }
+.tree-children.show { display: block; }
+
+/*
+ * 子项（叶子节点）—— 带树线连接符
+ *
+ * 截图中的结构：
+ *   涉外收入申报单 ▼
+ *   │
+ *   ├── ● 申报信息录入      ← 选中时蓝色底白字
+ *   ├── ● 申报信息修改
+ *   └── ● 审核疑问反馈
+ */
+.tree-leaf {
+  display: flex; align-items: center; padding: 6px 10px 6px 26px; cursor: pointer;
+  font-size: 13px; color: var(--c-tree-muted); position: relative;
+  line-height: 1.6;
+}
+/* 竖线 */
+.tree-leaf::before {
+  content: ''; position: absolute; left: 17px; top: 0; bottom: 0;
+  width: 1px; background: var(--c-tree-line);
+}
+/* 横线分支 */
+.tree-leaf::after {
+  content: ''; position: absolute; left: 17px; top: 50%; width: 8px; height: 1px;
+  background: var(--c-tree-line);
+}
+/* 小圆点 */
+.tree-leaf .leaf-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--c-tree-line); flex-shrink: 0; margin-right: 6px;
+  position: relative; z-index: 1;
+}
+.tree-leaf:hover { background: var(--c-tree-hover); color: var(--c-tree-text); }
+.tree-leaf:hover .leaf-dot { background: var(--c-primary); }
+
+/* ★ 选中态：蓝色底 + 白字（和截图完全一致） */
+.tree-leaf.active {
+  background: var(--c-tree-active-bg) !important;
+  color: var(--c-tree-active-text) !important;
+  font-weight: 600;
+}
+.tree-leaf.active .leaf-dot { background: #fff !important; }
+.tree-leaf.active::before,
+.tree-leaf.active::after { background: rgba(255,255,255,.3); }
+
+/* 最后一个子项的竖线只画到中间 */
+.tree-children > .tree-leaf:last-child::before { bottom: 50%; }
+
+/* 无子项的叶子节点 */
+.tree-leaf-simple {
+  display: flex; align-items: center; padding: 7px 10px; cursor: pointer;
+  font-size: 13px; color: var(--c-tree-muted);
+}
+.tree-leaf-simple:hover { background: var(--c-tree-hover); color: var(--c-tree-text); }
+
+/* ============================================================
+ * 右侧主内容区
+ * ============================================================ */
+.main {
+  flex: 1; padding: 16px 20px; overflow-x: hidden; overflow-y: auto;
+  min-width: 0; background: var(--c-main-bg);
+  position: relative;
+}
+
+/* ---- 页面标题（蓝色，带星标） ---- */
+.page-title {
+  font-size: 15px; font-weight: 700; color: var(--c-header);
+  margin: 0 0 8px; display: flex; align-items: center; gap: 4px;
+}
+.page-title .req-star { color: var(--c-danger); font-size: 13px; }
+
+/* ---- 内容区子标签栏（申报信息修改 | 申报信息录入） ---- */
+.sub-tab-bar {
+  display: flex; gap: 0; margin-bottom: 10px;
+}
+.sub-tab {
+  padding: 6px 18px; font-size: 13px; font-weight: 600; cursor: pointer;
+  border: 1px solid var(--c-table-border); background: #fff; color: var(--c-tree-text);
+  border-bottom: none; border-radius: 3px 3px 0 0; margin-right: 2px;
+}
+.sub-tab:hover { background: var(--c-tree-hover); }
+.sub-tab.active {
+  background: var(--c-header); color: #fff; border-color: var(--c-header);
+}
+
+/* ---- 面包屑导航 ---- */
+.breadcrumb {
+  font-size: 12px; color: var(--c-muted); margin-bottom: 12px;
+  padding: 6px 10px; background: #fff; border: 1px solid var(--c-table-border);
+  border-radius: 3px;
+}
+.breadcrumb .bc-current { color: var(--c-primary); font-weight: 600; }
+
+/* ---- 筛选条件栏 ---- */
+.filter-bar {
+  background: #fff; border: 1px solid var(--c-table-border);
+  border-radius: 3px; padding: 10px 14px; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-size: 13px;
+}
+.filter-bar label { color: var(--c-muted); font-weight: 600; white-space: nowrap; }
+.filter-bar input[type="date"],
+.filter-bar input[type="text"] {
+  border: 1px solid var(--c-border); border-radius: 3px; padding: 4px 8px;
+  font-size: 13px; outline: none;
+}
+.filter-bar input:focus { border-color: var(--c-primary); }
+.filter-bar .sep { color: var(--c-muted); }
+.btn-query {
+  background: var(--c-header); color: #fff; border: none;
+  padding: 5px 14px; border-radius: 3px; cursor: pointer; font-size: 13px;
+  font-weight: 600;
+}
+.btn-query:hover { background: var(--c-header-dark); }
+
+/* 导出按钮（和截图一致） */
+.btn-export {
+  background: #fff; color: var(--c-tree-text); border: 1px solid var(--c-table-border);
+  padding: 5px 14px; border-radius: 3px; cursor: pointer; font-size: 13px;
+  font-weight: 600; margin-left: 4px;
+}
+.btn-export:hover { background: var(--c-tree-hover); border-color: var(--c-primary); color: var(--c-primary); }
+
+/* 查询页进度条（截图中分页上方有灰色进度条） */
+.query-progress {
+  width: 100%; height: 8px; background: #e8e8e8; border-radius: 4px;
+  margin-bottom: 10px; overflow: hidden;
+}
+.query-progress-bar {
+  height: 100%; background: linear-gradient(90deg, #0099CC, #0077AA);
+  border-radius: 4px; transition: width .3s ease;
+}
+
+/* ---- 数据表格（仿 ASOne 网格线风格） ---- */
+.data-table-wrap {
+  background: #fff; border: 1px solid var(--c-table-border); border-radius: 3px;
+  overflow: hidden; margin-bottom: 12px;
+}
+table.data-table {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+}
+table.data-table th {
+  background: #f0f4f8; color: var(--c-tree-text); font-weight: 700;
+  border: 1px solid var(--c-table-border); padding: 8px 10px;
+  text-align: center; white-space: nowrap;
+}
+table.data-table td {
+  border: 1px solid var(--c-table-border); padding: 7px 10px;
+  text-align: center; color: var(--c-text);
+}
+table.data-table tbody tr:hover { background: #f5f8fc; }
+/* 查询结果可点击行（悬停更明显，提示可点击） */
+table.data-table tbody tr.query-row-clickable:hover { background: #e8f0fe; cursor: pointer; }
+table.data-table tbody tr.query-row-clickable td { transition: background 0.15s; }
+/* 序号列居中 */
+table.data-table td.col-index { width: 50px; }
+/* 操作列 */
+table.data-table td.col-actions { white-space: nowrap; }
+
+/* ---- 分页栏 ---- */
+.pagination {
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: 6px; font-size: 13px; padding: 8px 0; color: var(--c-muted);
+}
+.pagination .page-info { margin-right: auto; font-weight: 600; }
+.page-btn {
+  border: 1px solid var(--c-table-border); background: #fff; padding: 3px 10px;
+  border-radius: 3px; cursor: pointer; font-size: 12px; color: var(--c-tree-text);
+}
+.page-btn:hover { background: var(--c-tree-hover); border-color: var(--c-primary); color: var(--c-primary); }
+.page-btn:disabled { opacity: .4; cursor: default; }
+
+/* ---- "拖拽至此上传"浮动提示 ---- */
+.upload-hint {
+  position: absolute; right: 24px; top: 16px; z-index: 10;
+  display: flex; align-items: center; gap: 6px; color: var(--c-primary);
+  font-size: 13px; font-weight: 600; cursor: default; background: #fff;
+  padding: 6px 14px; border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08); border: 1px solid #e0e6ed;
+}
+.upload-hint .upload-icon {
+  width: 24px; height: 24px; border-radius: 50%; background: var(--c-header); color: #fff;
+  display: grid; place-items: center; font-size: 12px;
+}
+
+/* ============================================================
+ * 卡片、表单、按钮、通用表格
+ * ============================================================ */
+.card {
+  background: #fff; border: 1px solid var(--c-border); border-radius: 6px;
+  box-shadow: var(--shadow-sm); padding: 16px 18px; margin-bottom: 14px;
+}
+.card h3 { margin: 0 0 12px; font-size: 15px; color: var(--c-primary); display: flex; align-items: center; gap: 6px; }
+.card .hint { color: var(--c-muted); font-size: 13px; margin: -8px 0 12px; }
+
+.form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 18px; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field.full { grid-column: 1 / -1; }
+.field label { font-size: 13px; color: var(--c-muted); font-weight: 600; }
+.field label .req { color: var(--c-danger); margin-left: 2px; }
+.field input, .field select, .field textarea {
+  border: 1px solid var(--c-border); border-radius: 4px; padding: 8px 10px; font-size: 14px;
+  background: #fff; color: var(--c-text); font-family: inherit;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none; border-color: var(--c-primary); box-shadow: 0 0 0 2px var(--c-primary-soft);
+}
+.field textarea { resize: vertical; min-height: 60px; }
+.field .err { color: var(--c-danger); font-size: 12px; min-height: 14px; }
+
+.btn {
+  border: none; border-radius: 4px; padding: 8px 16px; font-size: 13px; cursor: pointer;
+  font-weight: 600; font-family: inherit; display: inline-flex; align-items: center; gap: 5px;
+}
+.btn-primary { background: var(--c-primary); color: #fff; }
+.btn-primary:hover { background: var(--c-header-dark); }
+.btn-ok { background: var(--c-ok); color: #fff; }
+.btn-ok:hover { filter: brightness(.95); }
+.btn-warn { background: var(--c-warn); color: #fff; }
+.btn-danger { background: var(--c-danger); color: #fff; }
+.btn-ghost-c { background: #fff; color: var(--c-primary); border: 1px solid var(--c-border); }
+.btn-ghost-c:hover { background: var(--c-primary-soft); }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.btn-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; align-items: center; }
+
+/* 快捷入口文字链接（查看申报跟踪、浏览案例库） */
+.quick-link {
+  display: inline-block; padding: 6px 14px; border-radius: 3px;
+  color: var(--c-primary); font-size: 13px; text-decoration: none;
+  border: 1px solid var(--c-border); background: #fff;
+  line-height: 1.8;
+}
+.quick-link:hover { background: var(--c-primary-soft); }
+
+/* 新增按钮（列表页顶部） */
+.btn-new {
+  background: var(--c-header); color: #fff; border: none;
+  padding: 6px 16px; border-radius: 3px; cursor: pointer; font-size: 13px;
+  font-weight: 600; margin-bottom: 10px;
+}
+.btn-new:hover { background: var(--c-header-dark); }
+
+table.tbl { width: 100%; border-collapse: collapse; background: #fff; font-size: 13px; border: 1px solid var(--c-border); border-radius: 4px; overflow: hidden; }
+table.tbl th, table.tbl td { border-bottom: 1px solid #eee; padding: 9px 11px; text-align: left; }
+table.tbl th { background: #f5f7fa; color: var(--c-muted); font-weight: 700; white-space: nowrap; }
+table.tbl tr:last-child td { border-bottom: none; }
+table.tbl tbody tr:hover td { background: #fafcff; }
+.tag { padding: 2px 8px; border-radius: 3px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.tag.pending { background: var(--c-pending-soft); color: var(--c-pending); }
+.tag.approved { background: var(--c-ok-soft); color: var(--c-ok); }
+.tag.returned { background: var(--c-danger-soft); color: var(--c-danger); }
+.tag.cat { background: var(--c-primary-soft); color: var(--c-primary); }
+
+.case-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.case-card { border: 1px solid var(--c-border); border-radius: 6px; padding: 14px 16px; background: #fff; }
+.case-card .case-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.case-card .case-title { font-weight: 700; font-size: 14px; color: var(--c-primary); }
+.case-card .case-bg { color: var(--c-muted); font-size: 13px; margin-bottom: 10px; }
+.case-card .kp { margin: 0; padding-left: 18px; font-size: 13px; color: var(--c-text); }
+.case-card .kp li { margin-bottom: 4px; }
+
+.flow { display: flex; flex-direction: column; gap: 0; position: relative; }
+.flow-step { display: flex; gap: 14px; position: relative; padding-bottom: 20px; }
+.flow-step:not(:last-child)::before {
+  content: ''; position: absolute; left: 16px; top: 34px; bottom: 0; width: 2px; background: var(--c-tree-line);
+}
+.flow-dot {
+  width: 34px; height: 34px; border-radius: 50%; background: var(--c-primary); color: #fff;
+  display: grid; place-items: center; font-weight: 700; flex-shrink: 0; z-index: 1; font-size: 14px;
+}
+.flow-body { background: #fff; border: 1px solid var(--c-border); border-radius: 6px; padding: 10px 14px; flex: 1; }
+.flow-body .ft { font-weight: 700; margin-bottom: 2px; font-size: 14px; }
+.flow-body .fd { color: var(--c-muted); font-size: 13px; }
+.flow-body .fa { color: var(--c-primary); font-size: 12px; margin-top: 5px; font-weight: 600; }
+
+.alert { padding: 10px 13px; border-radius: 4px; font-size: 13px; margin-bottom: 12px; }
+.alert.info { background: var(--c-primary-soft); color: var(--c-primary-d); }
+.alert.warn { background: var(--c-warn-soft); color: var(--c-warn); }
+.alert.ok { background: var(--c-ok-soft); color: var(--c-ok); }
+.empty { text-align: center; color: var(--c-muted); padding: 36px 0; }
+.kv { display: grid; grid-template-columns: 130px 1fr; gap: 6px 12px; font-size: 13px; }
+.kv dt { color: var(--c-muted); }
+.kv dd { margin: 0; font-weight: 500; }
+.section-title { font-size: 14px; font-weight: 700; margin: 14px 0 8px; color: var(--c-primary); }
+
+/* ============================================================
+ * 登录遮罩 & 弹窗
+ * ============================================================ */
+.modal-mask {
+  position: fixed; inset: 0; background: rgba(0,30,60,.45); display: grid; place-items: center; z-index: 50;
+}
+.modal {
+  background: #fff; border-radius: 8px; padding: 26px 28px; width: 420px; max-width: 92vw;
+  box-shadow: 0 16px 48px rgba(0,0,0,.25);
+}
+.modal h2 { margin: 0 0 4px; font-size: 18px; color: var(--c-primary); }
+.modal .sub { color: var(--c-muted); font-size: 13px; margin-bottom: 18px; }
+.role-pick { display: flex; gap: 12px; margin-bottom: 14px; }
+.role-opt {
+  flex: 1; border: 2px solid var(--c-border); border-radius: 8px; padding: 14px; text-align: center;
+  cursor: pointer; transition: .15s;
+}
+.role-opt:hover { border-color: var(--c-primary); }
+.role-opt.sel { border-color: var(--c-primary); background: var(--c-primary-soft); }
+.role-opt .ri { font-size: 26px; }
+.role-opt .rn { font-weight: 700; margin-top: 6px; }
+
+/* ============================================================
+ * 登录页（全屏分栏：左侧品牌 + 右侧表单）
+ * ============================================================ */
+.login-wrap {
+  position: fixed; inset: 0; display: flex; min-height: 100vh; z-index: 60;
+}
+.login-brand {
+  flex: 1.1; background: linear-gradient(135deg, #005a82 0%, #0077AA 55%, #3399cc 100%);
+  color: #fff; padding: 54px 52px; display: flex; flex-direction: column; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.login-brand::after {
+  content: ''; position: absolute; right: -120px; top: -120px; width: 360px; height: 360px;
+  background: rgba(255,255,255,.08); border-radius: 50%;
+}
+.login-brand::before {
+  content: ''; position: absolute; left: -80px; bottom: -100px; width: 280px; height: 280px;
+  background: rgba(255,255,255,.06); border-radius: 50%;
+}
+.lb-logo { font-size: 54px; margin-bottom: 18px; position: relative; z-index: 1; }
+.lb-title { font-size: 30px; font-weight: 800; line-height: 1.3; letter-spacing: 1px; position: relative; z-index: 1; }
+.lb-desc { margin-top: 16px; font-size: 14px; line-height: 1.7; color: rgba(255,255,255,.85); position: relative; z-index: 1; }
+.lb-tips { margin-top: 30px; display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 1; }
+.lb-tip { display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,.92); }
+.lt-ic { display: inline-flex; width: 26px; height: 26px; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.18); border-radius: 7px; font-size: 14px; }
+.lb-foot { margin-top: auto; padding-top: 28px; font-size: 12px; color: rgba(255,255,255,.7); position: relative; z-index: 1; }
+
+.login-card {
+  flex: 1; background: #fff; display: flex; flex-direction: column; justify-content: center;
+  padding: 48px 60px; max-width: 520px;
+}
+.login-h { margin: 0 0 6px; font-size: 24px; color: var(--c-primary); font-weight: 800; }
+.login-sub { color: var(--c-muted); font-size: 14px; margin-bottom: 26px; }
+.login-card .role-pick { margin-bottom: 20px; }
+.login-card .role-opt { padding: 16px; }
+.login-card .role-opt .rn { font-size: 15px; }
+.login-demo {
+  margin: 4px 0 14px; padding: 10px 14px;   background: #eef2f8; border: 1px dashed #c5d4e8;
+  border-radius: 7px; font-size: 13px; color: #2a4d6e;
+}
+.login-demo b { color: #0077AA; }
+.login-demo .ld-row { display: flex; align-items: center; gap: 6px; padding: 2px 0; }
+.login-demo .ld-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.login-demo .ld-dot.stu { background: #0077AA; }
+.login-demo .ld-dot.tea { background: #d46b08; }
+
+/* 一键进入演示账号 */
+.quick-login { display: flex; gap: 10px; margin-bottom: 14px; }
+.quick-login .ql-btn {
+  flex: 1; padding: 9px 8px; border: 1px solid #cfe0f7; background: #f5f9ff; color: #0077AA;
+  border-radius: 7px; cursor: pointer; font-size: 13px; font-weight: 600; transition: .15s;
+}
+.quick-login .ql-btn:hover { background: #e0eaf5; border-color: #9eb8d6; }
+
+.login-btn { width: 100%; padding: 12px; font-size: 15px; font-weight: 700; }
+.login-card .btn-row { margin-top: 4px; }
+.login-foot { margin-top: 18px; font-size: 12px; color: var(--c-muted); line-height: 1.6; }
+
+/* 窄屏：品牌区收起，仅显示表单 */
+@media (max-width: 720px) {
+  .login-wrap { flex-direction: column; }
+  .login-brand { flex: none; padding: 30px 28px; }
+  .lb-tips, .lb-foot { display: none; }
+  .login-card { max-width: none; padding: 36px 28px; }
+}
+
+/* ============================================================
+ * 涉外收入申报单 —— 真实 ASOne 表格布局（对齐已审核详情页截图）
+ * ============================================================ */
+
+/* 申报单表单容器 */
+.decl-form {
+  background: #fff; border: 1px solid var(--c-table-border);
+  border-radius: 3px; font-size: 13px;
+}
+.decl-form-table {
+  width: 100%; border-collapse: collapse;
+}
+.decl-form-table td {
+  border: 1px solid #d8dde4; padding: 3px 6px; vertical-align: middle;
+  line-height: 1.5; font-size: 12px;
+}
+/* 左侧标签列 */
+.decl-form-table .label-cell {
+  background: #eef1f5; color: #333; font-weight: 400;
+  width: 120px; text-align: right; padding: 3px 8px 3px 4px; white-space: nowrap; font-size: 12px;
+}
+/* 分组标题行（如：收款人 / 结算方式） */
+.decl-form-table .section-row td {
+  background: #f0f4f8; font-weight: 700; color: var(--c-header);
+  padding: 6px 10px; font-size: 13px; border-bottom: 2px solid #d5dde6;
+}
+/* 只读值 */
+.decl-form-table .value-cell {
+  color: #222; background: #fafbfc;
+}
+/* ★ 银行预填只读值（编辑模式下，非红框字段的显示） */
+.decl-form-table .value-cell .ro-val {
+  display: inline-block; width: 100%; padding: 2px 6px;
+  background: #f0f2f5; border: 1px solid #e0e4ea; border-radius: 2px;
+  color: #555; font-size: 12px; min-height: 20px;
+  cursor: not-allowed;
+}
+/* 银行预填数值字段（如结汇金额/账号等）加一个淡淡的左标识线 */
+.decl-form-table .value-cell .ro-val::before {
+  content: ''; display: inline-block; width: 3px; height: 14px;
+  background: #bbb; border-radius: 1px; vertical-align: middle;
+  margin-right: 6px; position: relative; top: -1px;
+}
+.decl-form-table .value-cell.readonly {
+  background: #f5f7fa;
+}
+.decl-form-table .value-cell.readonly .ro-val,
+.decl-form-table .value-cell.readonly textarea {
+  background: #eee; color: #666;
+}
+.decl-form-table .value-cell input,
+.decl-form-table .value-cell select,
+.decl-form-table .value-cell textarea {
+  width: 100%; border: 1px solid #ccc; border-radius: 2px;
+  padding: 2px 6px; font-size: 12px; font-family: inherit;
+  background: #fff; color: #222;
+}
+.decl-form-table .value-cell input:focus,
+.decl-form-table .value-cell select:focus,
+.decl-form-table .value-cell textarea:focus {
+  outline: none; border-color: var(--c-header); box-shadow: 0 0 0 2px rgba(0,153,204,.15);
+}
+.decl-form-table .value-cell textarea {
+  resize: vertical; min-height: 36px;
+}
+/* 单选/复选框不参与 width:100%，保持行内紧凑 */
+.decl-form-table .value-cell input[type="radio"],
+.decl-form-table .value-cell input[type="checkbox"] {
+  width: auto; display: inline-block; vertical-align: middle; margin: 0 2px 0 0;
+}
+
+/* 复选框组（结算方式 / 收入类型 / 对私类型） */
+.checkbox-group { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.checkbox-group label {
+  display: flex; align-items: center; gap: 3px; cursor: pointer; font-weight: normal;
+  white-space: nowrap; font-size: 12px;
+}
+.checkbox-group input[type="checkbox"] { margin: 0; cursor: pointer; }
+
+/* 大文本区域（企业意见/银行意见/外汇局意见） */
+.opinion-textarea {
+  width: 100%; min-height: 60px; border: 1px solid #ccc; border-radius: 2px;
+  padding: 6px 8px; font-size: 13px; font-family: inherit;
+  resize: vertical; background: #fff;
+}
+.opinion-textarea:focus {
+  outline: none; border-color: var(--c-header);
+}
+.opinion-textarea.readonly {
+  background: #f5f7fa; color: #444;
+}
+
+/* 返回按钮（右上角） */
+.decl-toolbar {
+  display: flex; justify-content: flex-end; margin-bottom: 8px;
+}
+.btn-back {
+  background: #fff; color: var(--c-tree-text); border: 1px solid var(--c-table-border);
+  padding: 4px 14px; border-radius: 3px; cursor: pointer; font-size: 13px;
+  font-weight: 600;
+}
+.btn-back:hover {
+  background: var(--c-tree-hover); border-color: var(--c-primary); color: var(--c-primary);
+}
+
+/* 必填标记 */
+.req-mark { color: var(--c-danger); margin-left: 2px; }
+
+/* 子标签文字提示 */
+.hint-text { color: #888; font-size: 12px; }
+
+/* ★ 国家代码输入框（代码输入 + 国名显示，对齐ASOne截图） */
+.country-code-input {
+  display: flex; align-items: center; gap: 8px;
+}
+.country-code-input input {
+  border: 1px solid var(--c-header); border-radius: 2px;
+  padding: 4px 6px; font-size: 13px; font-family: 'Courier New', monospace;
+  text-align: center; letter-spacing: 2px;
+}
+.country-code-input input:focus {
+  outline: none; border-color: var(--c-primary);
+  box-shadow: 0 0 0 2px rgba(0,153,204,.15);
+}
+.country-name-display {
+  color: var(--c-text); font-size: 13px;
+  min-width: 80px; padding: 3px 6px;
+  background: #f8f9fa; border-radius: 2px;
+}
+
+/* ★ 交易附言格式提示（根据交易编码动态显示模板） */
+.narrative-hint {
+  margin-top: 6px; padding: 5px 8px;
+  background: #eef7fb; border-left: 3px solid var(--c-header);
+  border-radius: 2px; font-size: 12px; color: #335;
+}
+.narrative-hint code {
+  background: #fff; border: 1px solid #cfe3ec; border-radius: 2px;
+  padding: 1px 5px; font-family: 'Courier New', monospace; color: #b3430b;
+}
+
+/* ★ 申报规则卡片（流程指引页） */
+.rule-card {
+  border: 1px solid #e2e8f0; border-radius: 4px;
+  padding: 10px 14px; margin-bottom: 10px; background: #fbfdff;
+}
+.rule-card .rule-title {
+  font-weight: 700; color: var(--c-header); font-size: 14px; margin-bottom: 4px;
+}
+.rule-card .rule-tpl {
+  margin: 4px 0 6px; font-size: 12px;
+}
+.rule-card .rule-tpl code {
+  background: #fff; border: 1px solid #cfe3ec; border-radius: 2px;
+  padding: 1px 5px; font-family: 'Courier New', monospace; color: #b3430b;
+}
+
+/* 响应式 */
+@media (max-width: 880px) {
+  .sidebar { display: none; }
+  .form-grid, .case-grid { grid-template-columns: 1fr; }
+  .decl-form-table .label-cell { width: 100px; font-size: 12px; }
+}
+
+/* ===== 学习码门禁 ===== */
+.gate-mask {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #eaf4fa 0%, #d6e9f3 100%);
+  font-family: "Microsoft YaHei","PingFang SC","Segoe UI",system-ui,sans-serif;
+}
+.gate-box {
+  width: 360px; max-width: 90vw; background: #fff; border-radius: 12px;
+  box-shadow: 0 18px 50px rgba(0,90,140,.18); padding: 28px 26px 24px;
+  text-align: center; border: 1px solid #e1ecf3;
+}
+.gate-logo { font-size: 22px; font-weight: 800; color: #0077AA; letter-spacing: 1px; }
+.gate-sub { font-size: 12px; color: #888; margin: 6px 0 18px; }
+.gate-field { text-align: left; margin-bottom: 14px; }
+.gate-field label { display:block; font-size:13px; color:#444; margin-bottom:6px; font-weight:600; }
+.gate-field input {
+  width: 100%; box-sizing: border-box; padding: 10px 12px; font-size: 15px;
+  border: 1px solid #cfd9e2; border-radius: 8px; outline: none;
+}
+.gate-field input:focus { border-color: #0077AA; box-shadow: 0 0 0 3px rgba(0,119,170,.12); }
+.gate-btn {
+  width:100%; padding:11px; font-size:15px; font-weight:700; color:#fff; cursor:pointer;
+  background:#0077AA; border:none; border-radius:8px; margin-top:4px;
+}
+.gate-btn:hover { background:#006690; }
+.gate-err { color:#c0392b; font-size:12px; min-height:16px; margin-top:8px; }
+.gate-tip { font-size:11px; color:#aaa; margin-top:14px; line-height:1.5; }
+
+/* ===== 品牌水印 + 专属授权角标 ===== */
+.wm-layer {
+  position: fixed; inset: 0; z-index: 500; pointer-events: none; overflow: hidden;
+  display: flex; flex-wrap: wrap; align-content: center; justify-content: center;
+  opacity: .06; font-size: 26px; font-weight: 800; color: #0077AA;
+  transform: rotate(-22deg); user-select: none;
+}
+.wm-layer span { margin: 18px 34px; white-space: nowrap; }
+.wm-badge {
+  position: fixed; right: 12px; bottom: 10px; z-index: 600; pointer-events: none;
+  background: rgba(0,119,170,.92); color:#fff; font-size:12px; font-weight:700;
+  padding: 5px 12px; border-radius: 20px; box-shadow: 0 3px 10px rgba(0,0,0,.18);
+  font-family: "Microsoft YaHei","PingFang SC",system-ui,sans-serif;
+}
+.wm-copy {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 600; pointer-events: none;
+  text-align: center; font-size: 11px; color: #99a; background: rgba(255,255,255,.7);
+  padding: 3px 0; font-family: "Microsoft YaHei","PingFang SC",system-ui,sans-serif;
+}
+
+</style>
+</head>
+<body>
+  <!-- ASOne 风格顶栏 -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="safe-logo">SAFE</div>
+      <div class="title-group">
+        <span class="platform-name">外汇管理局数字外管平台（ASOne）</span>
+        <span class="sub-title">模拟练习系统，不涉及上传申报外汇局</span>
+      </div>
+    </div>
+    <div class="userbox" id="userbox"><!-- 由 app.js 渲染 --></div>
+  </header>
+
+  <!-- 标签页导航（我的业务 / 数据申报 / 数据查询） -->
+  <nav class="tab-bar" id="tabBar">
+    <button class="tab-item" data-tab="business">我的业务</button>
+    <button class="tab-item active" data-tab="declare">数据申报</button>
+    <button class="tab-item" data-tab="query">数据查询</button>
+  </nav>
+
+  <!-- 拖拽上传提示 -->
+  <div class="upload-hint" id="uploadHint" style="display:none;">
+    <div class="upload-icon">⬆</div> 拖拽至此上传
+  </div>
+
+  <!-- 主体：左侧树形菜单 + 右侧内容区 -->
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"><!-- 由 app.js 渲染 --></aside>
+    <main class="main" id="main"><!-- 由 app.js 渲染 --></main>
+  </div>
+
+  <!-- 登录 / 角色选择遮罩 -->
+  <div id="loginMount"></div>
+
+  
+  
+  
+<script>const TXN_CODES=[{code:"121010",name:"一般贸易货款",cat:"货物贸易",needCustoms:!0},{code:"121020",name:"进料加工货款",cat:"货物贸易",needCustoms:!0},{code:"121030",name:"海关特殊监管区域货物货款",cat:"货物贸易",needCustoms:!0},{code:"121040",name:"非货币黄金",cat:"货物贸易",needCustoms:!0},{code:"121080",name:"边境小额贸易货款",cat:"货物贸易",needCustoms:!0},{code:"121090",name:"对外承包工程货物出口收汇",cat:"货物贸易",needCustoms:!0},{code:"121100",name:"外商投资企业设备进口",cat:"货物贸易",needCustoms:!0},{code:"121990",name:"其他纳入海关统计的货物贸易",cat:"货物贸易",needCustoms:!0},{code:"122010",name:"离岸转手买卖",cat:"货物贸易",needCustoms:!1},{code:"122990",name:"其他未纳入海关统计的货物贸易",cat:"货物贸易",needCustoms:!1},{code:"221000",name:"来料加工工缴费",cat:"货物贸易",needCustoms:!0},{code:"223010",name:"公务及商务旅行",cat:"服务贸易",needCustoms:!1},{code:"223021",name:"就医及健康相关旅行",cat:"服务贸易",needCustoms:!1},{code:"223029",name:"其他私人旅行",cat:"服务贸易",needCustoms:!1},{code:"227010",name:"电信服务",cat:"服务贸易",needCustoms:!1},{code:"227020",name:"计算机服务",cat:"服务贸易",needCustoms:!1},{code:"227030",name:"信息服务",cat:"服务贸易",needCustoms:!1},{code:"228021",name:"法律服务",cat:"服务贸易",needCustoms:!1},{code:"228022",name:"会计服务",cat:"服务贸易",needCustoms:!1},{code:"228023",name:"管理咨询和公共关系服务",cat:"服务贸易",needCustoms:!1},{code:"228031",name:"建筑和工程服务",cat:"服务贸易",needCustoms:!1},{code:"228039",name:"其他技术服务",cat:"服务贸易",needCustoms:!1},{code:"228042",name:"广告服务",cat:"服务贸易",needCustoms:!1},{code:"228990",name:"其他商业服务",cat:"服务贸易",needCustoms:!1},{code:"231010",name:"特许和商标使用费",cat:"服务贸易",needCustoms:!1},{code:"231020",name:"研发成果使用费",cat:"服务贸易",needCustoms:!1},{code:"231030",name:"复制或分销计算机软件许可费",cat:"服务贸易",needCustoms:!1},{code:"231040",name:"复制或分销视听及相关产品许可费",cat:"服务贸易",needCustoms:!1},{code:"232000",name:"别处未涵盖的政府服务",cat:"服务贸易",needCustoms:!1},{code:"321000",name:"职工报酬",cat:"收益",needCustoms:!1},{code:"322041",name:"存贷款利息",cat:"收益",needCustoms:!1},{code:"322042",name:"反向直接投资利息",cat:"收益",needCustoms:!1},{code:"322043",name:"其他投资收益",cat:"收益",needCustoms:!1},{code:"421010",name:"个人间捐赠及无偿援助",cat:"经常转移",needCustoms:!1},{code:"424000",name:"其他经常转移",cat:"经常转移",needCustoms:!1},{code:"521020",name:"外商直接投资资本金",cat:"资本与金融",needCustoms:!1},{code:"622011",name:"新借外债",cat:"资本与金融",needCustoms:!1},{code:"721010",name:"证券投资",cat:"资本与金融",needCustoms:!1}],TXN_CATS=["货物贸易","服务贸易","收益","经常转移","资本与金融"],CURRENCIES=["USD","EUR","GBP","JPY","HKD","CNY","AUD","CAD","SGD","CHF"],SETTLE_METHODS=["电汇(T/T)","信汇(M/T)","票汇(D/D)","信用证(L/C)","托收(D/P、D/A)"],COUNTRIES=[{value:"DZA",label:"DZA 阿尔及利亚民主人民共和国"},{value:"AFG",label:"AFG 阿富汗伊斯兰国"},{value:"ARG",label:"ARG 阿根廷共和国"},{value:"ARE",label:"ARE 阿拉伯联合酋长国"},{value:"ABW",label:"ABW 阿鲁巴"},{value:"OWN",label:"OWN 阿曼苏丹国"},{value:"AZE",label:"AZE 阿塞拜疆共和国"},{value:"EGY",label:"EGY 阿拉伯埃及共和国"},{value:"ETH",label:"ETH 埃塞俄比亚"},{value:"IRL",label:"IRL 爱尔兰"},{value:"EST",label:"EST 爱沙尼亚共和国"},{value:"AND",label:"AND 安道尔公国"},{value:"AGO",label:"AGO 安哥拉共和国"},{value:"AIA",label:"AIA 安圭拉"},{value:"ATG",label:"ATG 安提瓜和巴布达"},{value:"AUT",label:"AUT 奥地利共和国"},{value:"AUS",label:"AUS 澳大利亚联邦"},{value:"MAC",label:"MAC 中国澳门"},{value:"BRB",label:"BRB 巴巴多斯"},{value:"PNG",label:"PNG 巴布亚新几内亚独立国"},{value:"BHS",label:"BHS 巴哈马联邦"},{value:"PAK",label:"PAK 巴基斯坦伊斯兰共和国"},{value:"PRY",label:"PRY 巴拉圭共和国"},{value:"PSE",label:"PSE 巴勒斯坦国"},{value:"BHR",label:"BHR 巴林国"},{value:"PAN",label:"PAN 巴拿马共和国"},{value:"BRA",label:"BRA 巴西联邦共和国"},{value:"BLR",label:"BLR 白俄罗斯共和国"},{value:"BMU",label:"BMU 百慕大群岛"},{value:"BGR",label:"BGR 保加利亚共和国"},{value:"MNP",label:"MNP 北马里亚纳自由联邦"},{value:"PLW",label:"PLW 贝劳共和国"},{value:"BEN",label:"BEN 贝宁共和国"},{value:"BEL",label:"BEL 比利时王国"},{value:"ISL",label:"ISL 冰岛共和国"},{value:"PRI",label:"PRI 波多黎各自由联邦"},{value:"POL",label:"POL 波兰共和国"},{value:"BOL",label:"BOL 玻利维亚共和国"},{value:"BIH",label:"BIH 波斯尼亚和黑塞哥维那共和国"},{value:"BWA",label:"BWA 博茨瓦纳共和国"},{value:"BLZ",label:"BLZ 伯利兹"},{value:"BTN",label:"BTN 不丹王国"},{value:"BFA",label:"BFA 布基纳法索"},{value:"BDI",label:"BDI 布隆迪共和国"},{value:"BVT",label:"BVT 布维岛"},{value:"PRK",label:"PRK 北朝鲜/朝鲜民主主义人民共和国"},{value:"GNQ",label:"GNQ 赤道几内亚共和国"},{value:"DNK",label:"DNK 丹麦王国"},{value:"DEU",label:"DEU 德意志联邦共和国"},{value:"TMP",label:"TMP 东帝汶"},{value:"TGO",label:"TGO 多哥共和国"},{value:"DOM",label:"DOM 多米尼加共和国"},{value:"DMA",label:"DMA 多米尼克联邦"},{value:"RUS",label:"RUS 俄罗斯联邦"},{value:"ECU",label:"ECU 厄瓜多尔共和国"},{value:"ERI",label:"ERI 厄立特里亚国"},{value:"FRA",label:"FRA 法兰西共和国"},{value:"FRO",label:"FRO 法罗群岛"},{value:"PYF",label:"PYF 法属波利尼西亚"},{value:"GUF",label:"GUF 法属圭亚那"},{value:"ATF",label:"ATF 法属南部领土"},{value:"VAT",label:"VAT 梵蒂冈城国"},{value:"PHL",label:"PHL 菲律宾共和国"},{value:"FJI",label:"FJI 斐济共和国"},{value:"FIN",label:"FIN 芬兰共和国"},{value:"CPV",label:"CPV 佛得角共和国"},{value:"GMB",label:"GMB 冈比亚共和国"},{value:"COG",label:"COG 刚果共和国（民主共和国）"},{value:"COL",label:"COL 哥伦比亚共和国"},{value:"CRI",label:"CRI 哥斯达黎加共和国"},{value:"GRD",label:"GRD 格林纳达"},{value:"GRL",label:"GRL 格陵兰"},{value:"GEO",label:"GEO 格鲁吉亚共和国"},{value:"CUB",label:"CUB 古巴共和国"},{value:"GLP",label:"GLP 瓜德罗普"},{value:"GUM",label:"GUM 关岛"},{value:"GUY",label:"GUY 圭亚那合作共和国"},{value:"KAZ",label:"KAZ 哈萨克斯坦共和国"},{value:"HTI",label:"HTI 海地共和国"},{value:"KOR",label:"KOR 大韩民国"},{value:"NLD",label:"NLD 荷兰王国"},{value:"ANT",label:"ANT 荷属安的列斯"},{value:"HMD",label:"HMD 赫德岛和麦克唐纳岛"},{value:"HND",label:"HND 洪都拉斯共和国"},{value:"KIR",label:"KIR 基里巴斯共和国"},{value:"DJI",label:"DJI 吉布提共和国"},{value:"KGZ",label:"KGZ 吉尔吉斯共和国"},{value:"GIN",label:"GIN 几内亚共和国"},{value:"GNB",label:"GNB 几内亚比绍"},{value:"CAN",label:"CAN 加拿大"},{value:"GHA",label:"GHA 加纳共和国"},{value:"GAB",label:"GAB 加蓬共和国"},{value:"KHM",label:"KHM 柬埔寨王国"},{value:"CZE",label:"CZE 捷克共和国"},{value:"ZWE",label:"ZWE 津巴布韦共和国"},{value:"CMR",label:"CMR 喀麦隆共和国"},{value:"QAT",label:"QAT 卡塔尔国"},{value:"CYM",label:"CYM 开曼群岛"},{value:"CCK",label:"CCK 科科斯(基林)群岛"},{value:"COM",label:"COM 科摩罗伊斯兰联邦共和国"},{value:"CIV",label:"CIV 科特迪瓦共和国(象牙海岸）"},{value:"KWT",label:"KWT 科威特国"},{value:"HRV",label:"HRV 克罗地亚共和国"},{value:"KEN",label:"KEN 肯尼亚共和国"},{value:"COK",label:"COK 库克群岛"},{value:"LVA",label:"LVA 拉脱维亚共和国"},{value:"LSO",label:"LSO 莱索托王国"},{value:"LAO",label:"LAO 老挝人民民主共和国"},{value:"LBN",label:"LBN 黎巴嫩共和国"},{value:"LBR",label:"LBR 利比里亚共和国"},{value:"LBY",label:"LBY 大阿拉伯利比亚人民社会主义民众国"},{value:"LTU",label:"LTU 立陶宛共和国"},{value:"LIE",label:"LIE 列支敦士登公国"},{value:"REU",label:"REU 留尼汪"},{value:"LUX",label:"LUX 卢森堡大公国"},{value:"RWA",label:"RWA 卢旺达共和国"},{value:"ROM",label:"ROM 罗马尼亚"},{value:"MDG",label:"MDG 马达加斯加共和国"},{value:"MLT",label:"MLT 马耳他共和国"},{value:"MDV",label:"MDV 马尔代夫共和国"},{value:"FLK",label:"FLK 马尔维纳斯群岛"},{value:"MWI",label:"MWI 马拉维共和国"},{value:"MYS",label:"MYS 马来西亚"},{value:"MLI",label:"MLI 马里共和国"},{value:"MKD",label:"MKD 马其顿共和国"},{value:"MHL",label:"MHL 马绍尔群岛共和国"},{value:"MTQ",label:"MTQ 马提尼克"},{value:"MYT",label:"MYT 马约特"},{value:"MUS",label:"MUS 毛里求斯共和国"},{value:"MRT",label:"MRT 毛里塔尼亚伊斯兰共和国"},{value:"USA",label:"USA 美利坚合众国"},{value:"ASM",label:"ASM 美属萨摩亚"},{value:"UMI",label:"UMI 美属太平洋各群岛"},{value:"VIR",label:"VIR 美属维尔京群岛"},{value:"MNG",label:"MNG 蒙古国"},{value:"MSR",label:"MSR 蒙特塞拉特"},{value:"BGD",label:"BGD 孟加拉人民共和国"},{value:"PER",label:"PER 秘鲁共和国"},{value:"FSM",label:"FSM 密克罗尼西亚联邦"},{value:"MMR",label:"MMR 缅甸联邦"},{value:"MDA",label:"MDA 摩尔多瓦共和国"},{value:"MAR",label:"MAR 摩洛哥王国"},{value:"MCO",label:"MCO 摩纳哥公国"},{value:"MOZ",label:"MOZ 莫桑比克共和国"},{value:"MEX",label:"MEX 墨西哥合众国"},{value:"NAM",label:"NAM 纳米比亚共和国"},{value:"ZAF",label:"ZAF 南非共和国"},{value:"ATA",label:"ATA 南极洲"},{value:"SGS",label:"SGS 南乔治岛和南桑德韦奇岛"},{value:"SCG",label:"SCG 南斯拉夫联盟共和国"},{value:"NRU",label:"NRU 瑙鲁共和国"},{value:"NPL",label:"NPL 尼泊尔王国"},{value:"NIC",label:"NIC 尼加拉瓜共和国"},{value:"NER",label:"NER 尼日尔共和国"},{value:"NGA",label:"NGA 尼日利亚联邦共和国"},{value:"NIU",label:"NIU 纽埃"},{value:"NOR",label:"NOR 挪威王国"},{value:"NFK",label:"NFK 诺福克岛"},{value:"PCN",label:"PCN 皮特凯恩岛"},{value:"PRT",label:"PRT 葡萄牙共和国"},{value:"JPN",label:"JPN 日本国"},{value:"SWE",label:"SWE 瑞典王国"},{value:"CHE",label:"CHE 瑞士联邦"},{value:"SLV",label:"SLV 萨尔多瓦共和国"},{value:"SLE",label:"SLE 塞拉利昂共和国"},{value:"SEN",label:"SEN 塞内加尔共和国"},{value:"CYP",label:"CYP 塞浦路斯共和国"},{value:"SYC",label:"SYC 塞舌尔共和国"},{value:"SAU",label:"SAU 沙特阿拉伯王国"},{value:"CXR",label:"CXR 圣诞岛"},{value:"STP",label:"STP 圣多美和普林西比民主共和国"},{value:"SHN",label:"SHN 圣赫勒拿"},{value:"KNA",label:"KNA 圣基茨和尼维斯联邦"},{value:"LCA",label:"LCA 圣卢西亚"},{value:"SMR",label:"SMR 圣马力诺共和国"},{value:"SPM",label:"SPM 圣皮埃尔和密克隆"},{value:"VCT",label:"VCT 圣文森特和格林纳丁斯"},{value:"LKA",label:"LKA 斯里兰卡民主社会主义共和国"},{value:"SVK",label:"SVK 斯洛伐克共和国"},{value:"SVN",label:"SVN 斯洛文尼亚共和国"},{value:"SJM",label:"SJM 斯瓦尔巴群岛"},{value:"SWZ",label:"SWZ 斯威士兰王国"},{value:"SDN",label:"SDN 苏丹共和国"},{value:"SSD",label:"SSD 南苏丹共和国"},{value:"SUR",label:"SUR 苏里南共和国"},{value:"SOM",label:"SOM 索马里共和国"},{value:"SLB",label:"SLB 所罗门群岛"},{value:"TJK",label:"TJK 塔吉克斯坦共和国"},{value:"THA",label:"THA 泰王国"},{value:"TZA",label:"TZA 坦桑尼亚联合共和国"},{value:"TON",label:"TON 汤加王国"},{value:"TCA",label:"TCA 特克斯和凯科斯群岛"},{value:"TTO",label:"TTO 特立尼达和多巴哥共和国"},{value:"TUN",label:"TUN 突尼斯共和国"},{value:"TUV",label:"TUV 图瓦卢"},{value:"TUR",label:"TUR 土耳其共和国"},{value:"TKM",label:"TKM 土库曼斯坦"},{value:"TKL",label:"TKL 托克劳"},{value:"WLF",label:"WLF 瓦利斯和富图纳群岛"},{value:"VUT",label:"VUT 瓦努阿图共和国"},{value:"GTM",label:"GTM 危地马拉共和国"},{value:"VEN",label:"VEN 委内瑞拉共和国"},{value:"BRN",label:"BRN 文莱达鲁萨兰国"},{value:"UGA",label:"UGA 乌干达共和国"},{value:"UKR",label:"UKR 乌克兰"},{value:"URY",label:"URY 乌拉圭东岸共和国"},{value:"UZB",label:"UZB 乌兹别克斯坦共和国"},{value:"ESP",label:"ESP 西班牙"},{value:"ESH",label:"ESH 西撒哈拉"},{value:"WSM",label:"WSM 西萨摩亚独立国"},{value:"GRC",label:"GRC 希腊共和国"},{value:"HKG",label:"HKG 中国香港"},{value:"SGP",label:"SGP 新加坡共和国"},{value:"NCL",label:"NCL 新喀里多尼亚"},{value:"NZL",label:"NZL 新西兰"},{value:"HUN",label:"HUN 匈牙利共和国"},{value:"SYR",label:"SYR 阿拉伯叙利亚共和国"},{value:"JAM",label:"JAM 牙买加"},{value:"ARM",label:"ARM 亚美尼亚共和国"},{value:"YEM",label:"YEM 也门共和国"},{value:"IRQ",label:"IRQ 伊拉克共和国"},{value:"IRN",label:"IRN 伊朗伊斯兰共和国"},{value:"ISR",label:"ISR 以色列国"},{value:"ITA",label:"ITA 意大利共和国"},{value:"IND",label:"IND 印度共和国"},{value:"IDN",label:"IDN 印度尼西亚共和国"},{value:"GBR",label:"GBR 大不列颠及北爱尔兰联合王国"},{value:"VGB",label:"VGB 英属维尔京群岛"},{value:"IOT",label:"IOT 英属印度洋领土"},{value:"JOR",label:"JOR 约旦哈希姆王国"},{value:"VNM",label:"VNM 越南社会主义共和国"},{value:"ZMB",label:"ZMB 赞比亚共和国"},{value:"ZAR",label:"ZAR 扎伊尔共和国"},{value:"TCD",label:"TCD 乍得共和国"},{value:"GIB",label:"GIB 直布罗陀"},{value:"CHL",label:"CHL 智利共和国"},{value:"CAF",label:"CAF 中非共和国"},{value:"CHN",label:"CHN 中国"},{value:"TWN",label:"TWN 中国台湾"},{value:"SRB",label:"SRB 塞尔维亚与黑山"}],CASES=[{id:"case-a",title:"案例A：一般贸易出口收汇",level:"入门",cat:"货物贸易",background:"晨光服装有限公司（境内出口企业）向美国客户 ABC Trading Inc. 出口一批服装，货物已报关出口，成交方式为 FOB，收到境外电汇货款 USD 50,000.00。",prefill:{declNo:"20260726SH330100001",bankBizNo:"BK20260726000001",bankName:"中国银行杭州市分行",accountNo:"6217856200123456789",settleAmt:"0.00",settleAcct:"6217856200123456789",exchRate:"7.2450",settleMethodKeys:["tt"],payeeName:"晨光服装有限公司",payeeCode:"91330100MA1XXXXXXX",payerName:"ABC Trading Inc.",payerCountry:"USA",currency:"USD",amount:"50000.00",cashAmt:"50000.00",cashAcct:"6217856200123456789",txnAmount:"50000.00",settleMethod:"电汇(T/T)",txnCode:"121010",narrative:"一般贸易出口服装的货款，合同号CG2026-001",contractNo:"CG2026-001",invoiceNo:"INV-2026-001",customsNo:"310120260XXXXXXXXX"},keyPoints:["交易编码选 121010（一般贸易货款），属于货物贸易。","交易附言格式：一般贸易出口【货物名称】的货款，合同号【XXX】；货物名称须按报关单填写，不可自创。","货物贸易必须填写报关单号，并与合同号、发票号核对一致。","付款人国别填付款人注册地（如“美国”），不是货物抵运国。","预收规则：报关前先收钱 = 预收 → 在“预收货款”栏勾选，附言加“预收”字样；非预收不勾。"]},{id:"case-b",title:"案例B：管理咨询服务费收汇",level:"入门",cat:"服务贸易",background:"智达咨询（北京）有限公司为香港客户提供管理咨询服务，收取服务费 USD 12,000.00，通过电汇收到。该笔为服务贸易，无货物进出口。",prefill:{declNo:"20260726BJ110800002",bankBizNo:"BK20260726000002",bankName:"中国工商银行北京分行",accountNo:"6222021000123456789",settleAmt:"0.00",settleAcct:"6222021000123456789",exchRate:"7.2450",settleMethodKeys:["tt"],payeeName:"智达咨询（北京）有限公司",payeeCode:"91110108MA2YYYYYYY",payerName:"HK Consulting Ltd.",payerCountry:"HKG",currency:"USD",amount:"12000.00",cashAmt:"12000.00",cashAcct:"6222021000123456789",txnAmount:"12000.00",settleMethod:"电汇(T/T)",txnCode:"228023",narrative:"管理咨询服务费",contractNo:"ZD-HK-2026",invoiceNo:"ZD-INV-026",customsNo:""},keyPoints:["交易编码选 228023（管理咨询和公共关系服务），属于服务贸易。","服务贸易无需填写报关单号，报关单号留空。","交易附言写“管理咨询服务费”，与编码一致。","付款人国别填“中国香港”。"]},{id:"case-c",title:"案例C：来料加工工缴费收汇",level:"进阶",cat:"货物贸易",background:"东南精密制造有限公司承接境外来料加工业务，收到委托方支付的工缴费 USD 8,000.00。料件由境外提供，仅收取加工费。",prefill:{declNo:"20260726XM350200003",bankBizNo:"BK20260726000003",bankName:"中国建设银行厦门分行",accountNo:"6217002000123456789",settleAmt:"0.00",settleAcct:"6217002000123456789",exchRate:"7.2450",settleMethodKeys:["tt"],payeeName:"东南精密制造有限公司",payeeCode:"91350200MA3ZZZZZZZ",payerName:"Taiwan OEM Co.",payerCountry:"TWN",currency:"USD",amount:"8000.00",cashAmt:"8000.00",cashAcct:"6217002000123456789",txnAmount:"8000.00",settleMethod:"电汇(T/T)",txnCode:"221000",narrative:"来料加工工缴费",contractNo:"DN-2026-LM",invoiceNo:"DN-INV-008",customsNo:"350120260XXXXXXXXX"},keyPoints:["交易编码选 221000（来料加工工缴费）。","来料加工属于货物贸易项下，需填报关单号。","附言写“来料加工工缴费”，区别于一般贸易货款。","付款人国别填“中国台湾”。"]},{id:"case-d",title:"案例D：商标特许权使用费收汇",level:"进阶",cat:"服务贸易",background:"华美品牌管理有限公司授权境外企业使用其注册商标，收到特许权使用费 USD 20,000.00。",prefill:{declNo:"20260726SZ440300004",bankBizNo:"BK20260726000004",bankName:"招商银行深圳分行",accountNo:"6214856500123456789",settleAmt:"0.00",settleAcct:"6214856500123456789",exchRate:"7.2450",settleMethodKeys:["tt"],payeeName:"华美品牌管理有限公司",payeeCode:"91440300MA4WWWWWWW",payerName:"EU Brand User GmbH",payerCountry:"DEU",currency:"USD",amount:"20000.00",cashAmt:"20000.00",cashAcct:"6214856500123456789",txnAmount:"20000.00",settleMethod:"电汇(T/T)",txnCode:"231010",narrative:"商标使用费",contractNo:"HM-LIC-2026",invoiceNo:"HM-INV-031",customsNo:""},keyPoints:["交易编码选 231010（特许和商标使用费），属于服务贸易。","无需报关单号。","附言写“商标使用费”，与编码一致。","付款人国别填“德国”。"]},{id:"case-e",title:"案例E：小额样品费收汇（未报关）",level:"进阶",cat:"货物贸易",background:"企业向境外客户邮寄一批样品，货值较低（未超 600 美元）无需报关，收到境外电汇样品费 USD 300.00。该笔属未纳入海关统计的货物贸易。",prefill:{declNo:"20260726SH330100005",bankBizNo:"BK20260726000005",bankName:"中国银行杭州市分行",accountNo:"6217856200123456789",settleAmt:"0.00",settleAcct:"6217856200123456789",exchRate:"7.2450",settleMethodKeys:["tt"],payeeName:"晨光服装有限公司",payeeCode:"91330100MA1XXXXXXX",payerName:"Sample Buyer LLC",payerCountry:"USA",currency:"USD",amount:"300.00",cashAmt:"300.00",cashAcct:"6217856200123456789",txnAmount:"300.00",settleMethod:"电汇(T/T)",txnCode:"122990",narrative:"未报关，邮寄服装样品的样品费，未纳入海关统计的货款",contractNo:"",invoiceNo:"INV-SMP-001",customsNo:""},keyPoints:["交易编码选 122990（其他未纳入海关统计的货物贸易）。","交易附言格式：未报关，邮寄【货物】样品的样品费，未纳入海关统计的货款。","未报关、未纳入海关统计 → 报关单号留空。","小额样品费多低于 600 美元免报关，但仍须如实申报交易编码。"]},{id:"case-f",title:"案例F：预收货款（纳入海关统计）",level:"进阶",cat:"货物贸易",background:"企业在货物报关前即收到境外买方预付的货款 USD 40,000.00，该笔货物将纳入海关统计，属于预收其他纳入海关统计的货物贸易。",prefill:{declNo:"20260726SH330100006",bankBizNo:"BK20260726000006",bankName:"中国银行杭州市分行",accountNo:"6217856200123456789",settleAmt:"0.00",settleAcct:"6217856200123456789",exchRate:"7.2450",settleMethodKeys:["tt"],payeeName:"晨光服装有限公司",payeeCode:"91330100MA1XXXXXXX",payerName:"ABC Trading Inc.",payerCountry:"USA",currency:"USD",amount:"40000.00",cashAmt:"40000.00",cashAcct:"6217856200123456789",txnAmount:"40000.00",settleMethod:"电汇(T/T)",txnCode:"121990",narrative:"预收其他纳入海关统计的货款贸易",prepay:"yes",other:"yes",contractNo:"CG2026-002",invoiceNo:"INV-2026-002",customsNo:""},keyPoints:["交易编码选 121990（其他纳入海关统计的货物贸易）。","交易附言：预收其他纳入海关统计的货款贸易。","收入类型：勾选【预收货款】、【其他】两项。","付款人国别：按付款人注册地国家/地区填写，不要写成货物抵运国。",'⚠️ 特别注意：预收必须勾"预收货款"栏，且附言必须包含"预收"字样，否则容易被外汇局退单。']}],DECL_RULES=[{code:"121010",title:"一般贸易货款申报",narrativeTpl:"一般贸易出口【货物名称】的货款，合同号【XXX】",points:["交易编码固定 121010（一般贸易货款），属货物贸易，须填报关单号。","交易附言格式：一般贸易出口【货物名称】的货款，合同号【XXX】。","【货物名称】必须按报关单上申报的货物名称填写，不可自创或简写。","预收判断：报关之前先收到的钱 = 预收。是预收则在“预收货款”栏划勾，附言加“预收”字样（如：一般贸易出口服装的预收货款，合同号XXX）；非预收不划勾。","申报国别以付款人注册地为准，不是货物抵运国。"]},{code:"122990",title:"未纳入海关统计的货物贸易",narrativeTpl:"未报关，邮寄【货物】样品的样品费，未纳入海关统计的货款",points:["交易编码 122990：其他未纳入海关统计的货物贸易。","交易附言格式：未报关，邮寄【货物】样品的样品费，未纳入海关统计的货款。","未报关、未纳入海关统计，无需填写报关单号。","多见于小额样品费、邮寄样品等情形。"]},{code:"121990",title:"其他纳入海关统计的货物贸易（预收）",narrativeTpl:"预收其他纳入海关统计的货款贸易",points:["交易编码 121990：其他纳入海关统计的货物贸易。","交易附言：预收其他纳入海关统计的货款贸易。","属于预收款：在“预收货款”栏划勾，附言含“预收”字样。","与 121010 区别：不限定为一般贸易，泛指其他纳入海关统计的货物贸易。"]},{title:"通用申报规则",points:["申报国别 = 付款人注册地（常驻国别），不是货物抵运国 / 最终消费国。","出口金额 600 美元以下通常可免报关出口（具体额度以各地规定为准）。","预收款以报关为准：报关之前先收钱即属预收，须在“预收货款”栏勾选。"]}],FLOW_STEPS=[{no:1,title:"境外汇款汇入",desc:"境外付款人通过其银行将款项汇出，指定境内收款人。",actor:"境外付款人 / 境外银行"},{no:2,title:"银行解付并通知",desc:"境内银行收到款项并解付，向收款人发送《涉外收入申报通知书》（针对等值 5000 美元以上款项）。",actor:"境内银行"},{no:3,title:"收款人填写申报单",desc:"收款人（境内居民）在规定期限内填写《涉外收入申报单》，选择交易编码、填写交易附言与收汇信息。等值 5000 美元以下可免逐笔申报。",actor:"收款人（企业/个人）"},{no:4,title:"银行审核报送",desc:"银行对申报信息进行审核，通过后通过“数字外管”平台将数据报送至外汇局。",actor:"境内银行"},{no:5,title:"外汇局统计与核查",desc:"外汇局进行国际收支统计；货物贸易项下还开展总量核查与主体分类管理。",actor:"外汇局（SAFE）"},{no:6,title:"申报完成",desc:"申报完成，相关资料与单据由企业留存备查，接受后续核查。",actor:"收款人 / 外汇局"}],COMMON_MISTAKES=["交易编码选错：货物贸易与服务贸易混淆（如把咨询费填成一般贸易货款）。","货物贸易漏填报关单号，或报关单号与合同、发票不一致。","交易附言与交易编码含义不一致（如编码是咨询费，附言却写“货款”）。","付款人国别填错：应填付款人常驻国别，而非收货地或最终消费国。","金额或币种填写错误：与合同、发票、银行水单不一致。","结算方式选择不当：未结合实际结算方式（如实际为信用证却选电汇）。"],GLOSSARY=[{term:"涉外收入申报单",def:"境内居民收到境外款项时，向外汇局申报该笔交易的国际收支统计申报单据。"},{term:"交易编码",def:"国际收支交易分类的 5 位数字代码，用于标识收汇性质（货物/服务/收益/转移等）。"},{term:"交易附言",def:"对交易内容的简要文字说明，应与交易编码含义一致。"},{term:"申报号码",def:"22 位编码：6 位银行代码 + 8 位日期(YYYYMMDD) + 8 位顺序号，唯一标识一笔申报。"},{term:"主体分类",def:"外汇局对货物贸易企业按收支行为进行的 A/B/C 类分类管理。"},{term:"总量核查",def:"外汇局对货物贸易企业进出口与收汇数据进行的比对核查。"},{term:"数字外管",def:"国家外汇管理局应用服务平台，银行与企业通过该平台办理和报送外汇业务。"}];window.FX_DATA={TXN_CODES:TXN_CODES,TXN_CATS:TXN_CATS,CURRENCIES:CURRENCIES,SETTLE_METHODS:SETTLE_METHODS,COUNTRIES:COUNTRIES,CASES:CASES,FLOW_STEPS:FLOW_STEPS,COMMON_MISTAKES:COMMON_MISTAKES,GLOSSARY:GLOSSARY,DECL_RULES:DECL_RULES};</script>
+<script>const FX_STORE=function(){const e="fx_current_user",t="fx_declarations",a="fx_seq";function n(e,t){try{const a=localStorage.getItem(e);return a?JSON.parse(a):t}catch(e){return t}}function r(e,t){localStorage.setItem(e,JSON.stringify(t))}function s(){return n(e,null)}function c(){return n(t,[])}function o(e){r(t,e)}function d(){const e=new Date,t=`${e.getFullYear()}${String(e.getMonth()+1).padStart(2,"0")}${String(e.getDate()).padStart(2,"0")}`;let s=n(a,0)+1;r(a,s);return`123456${t}${String(s).padStart(8,"0")}`}var i="fx_sample_seeded_v5";function u(){if(!(n(i,!1)&&c().length>0)){var e=c();new Date;[{declNo:"2026070312345600000001",submitTime:"2026-07-03T09:15:00.000Z",status:"approved",reviewTime:"2026-07-03T14:30:00.000Z",teacherComment:"审核通过",studentId:"stu_橙子多多",studentName:"橙子多多",caseId:"case_a",caseTitle:"案例A：一般贸易出口货款",fields:{bankBizNo:"BK20260703000001",bankName:"中国银行杭州市分行",payeeName:"晨光服装有限公司",payeeCode:"91330100MA1XXXXXXX",payerName:"ABC Trading Inc.",payerCountry:"USA",currency:"USD",amount:"50000.00",settleAmt:"0.00",settleAcct:"6217856200123456789",cashAmt:"50000.00",cashAcct:"6217856200123456789",exchRate:"7.2450",settleMethodKeys:["tt"],txnCode:"121010",txnAmount:"50000.00",narrative:"一般贸易出口服装的货款，合同号CG2026-001",date:"2026-07-03",latestDate:"2026-07-18",prepay:"",other:"",bonded:"",contractNo:"CG2026-001",invoiceNo:"INV-2026-001",customsNo:"310120260XXXXXXXXX",declarer:"橙子多多",declarerTel:"13800138001",declDate:"2026-07-03",handleDate:"2026-07-03"}},{declNo:"2026070812345600000002",submitTime:"2026-07-08T10:22:00.000Z",status:"approved",reviewTime:"2026-07-08T16:45:00.000Z",teacherComment:"审核通过",studentId:"stu_橙子多多",studentName:"橙子多多",caseId:"case_b",caseTitle:"案例B：咨询服务费",fields:{bankBizNo:"BK20260708000002",bankName:"中国工商银行北京分行",payeeName:"智达咨询（北京）有限公司",payeeCode:"91110108MA2YYYYYYY",payerName:"HK Consulting Ltd.",payerCountry:"HKG",currency:"USD",amount:"12000.00",settleAmt:"0.00",settleAcct:"6222021000123456789",cashAmt:"12000.00",cashAcct:"6222021000123456789",exchRate:"7.2450",settleMethodKeys:["tt"],txnCode:"228023",txnAmount:"12000.00",narrative:"管理咨询服务费，合同号ZD-HK-2026",date:"2026-07-08",latestDate:"2026-07-23",prepay:"",other:"",bonded:"",contractNo:"ZD-HK-2026",invoiceNo:"ZD-INV-026",customsNo:"",declarer:"橙子多多",declarerTel:"13800138001",declDate:"2026-07-08",handleDate:"2026-07-08"}},{declNo:"2026071212345600000003",submitTime:"2026-07-12T11:05:00.000Z",status:"pending",studentId:"stu_橙子多多",studentName:"橙子多多",caseId:"case_c",caseTitle:"案例C：来料加工工缴费",fields:{bankBizNo:"BK20260712000003",bankName:"中国建设银行厦门分行",payeeName:"东南精密制造有限公司",payeeCode:"91350200MA3ZZZZZZZ",payerName:"Taiwan OEM Co.",payerCountry:"TWN",currency:"USD",amount:"8000.00",settleAmt:"0.00",settleAcct:"6217002000123456789",cashAmt:"8000.00",cashAcct:"6217002000123456789",exchRate:"7.2450",settleMethodKeys:["tt"],txnCode:"221000",txnAmount:"8000.00",narrative:"来料加工工缴费，合同号DN-2026-LM",date:"2026-07-12",latestDate:"2026-07-27",prepay:"",other:"",bonded:"",contractNo:"DN-2026-LM",invoiceNo:"DN-INV-008",customsNo:"350120260XXXXXXXXX",declarer:"橙子多多",declarerTel:"13800138001",declDate:"2026-07-12",handleDate:"2026-07-12"}},{declNo:"2026071512345600000004",submitTime:"2026-07-15T14:30:00.000Z",status:"pending",studentId:"stu_橙子多多",studentName:"橙子多多",caseId:"case_d",caseTitle:"案例D：商标使用费",fields:{bankBizNo:"BK20260715000004",bankName:"招商银行深圳分行",payeeName:"华美品牌管理有限公司",payeeCode:"91440300MA4WWWWWWW",payerName:"EU Brand User GmbH",payerCountry:"DEU",currency:"USD",amount:"20000.00",settleAmt:"0.00",settleAcct:"6214856500123456789",cashAmt:"20000.00",cashAcct:"6214856500123456789",exchRate:"7.2450",settleMethodKeys:["tt"],txnCode:"231010",txnAmount:"20000.00",narrative:"商标使用费，合同号HM-LIC-2026",date:"2026-07-15",latestDate:"2026-07-30",prepay:"",other:"",bonded:"",contractNo:"HM-LIC-2026",invoiceNo:"HM-INV-031",customsNo:"",declarer:"橙子多多",declarerTel:"13800138001",declDate:"2026-07-15",handleDate:"2026-07-15"}},{declNo:"2026071812345600000005",submitTime:"2026-07-18T09:40:00.000Z",status:"approved",reviewTime:"2026-07-18T15:10:00.000Z",teacherComment:"审核通过",studentId:"stu_橙子多多",studentName:"橙子多多",caseId:"case_e",caseTitle:"案例E：小额样品费(未报关)",fields:{bankBizNo:"BK20260718000005",bankName:"中国银行杭州市分行",payeeName:"晨光服装有限公司",payeeCode:"91330100MA1XXXXXXX",payerName:"Smith & Co.",payerCountry:"USA",currency:"USD",amount:"300.00",settleAmt:"0.00",settleAcct:"6217856200123456789",cashAmt:"300.00",cashAcct:"6217856200123456789",exchRate:"7.2450",settleMethodKeys:["tt"],txnCode:"122990",txnAmount:"300.00",narrative:"未报关，邮寄服装样品的样品费，未纳入海关统计的货款",date:"2026-07-18",latestDate:"2026-08-02",prepay:"",other:"",bonded:"",contractNo:"",invoiceNo:"",customsNo:"",declarer:"橙子多多",declarerTel:"13800138001",declDate:"2026-07-18",handleDate:"2026-07-18"}},{declNo:"2026072212345600000006",submitTime:"2026-07-22T16:10:00.000Z",status:"pending",studentId:"stu_橙子多多",studentName:"橙子多多",caseId:"case_f",caseTitle:"案例F：预收货款(纳入海关统计)",fields:{bankBizNo:"BK20260722000006",bankName:"中国银行杭州市分行",payeeName:"晨光服装有限公司",payeeCode:"91330100MA1XXXXXXX",payerName:"ABC Trading Inc.",payerCountry:"USA",currency:"USD",amount:"40000.00",settleAmt:"0.00",settleAcct:"6217856200123456789",cashAmt:"40000.00",cashAcct:"6217856200123456789",exchRate:"7.2450",settleMethodKeys:["tt"],txnCode:"121990",txnAmount:"40000.00",narrative:"预收其他纳入海关统计的货款贸易",date:"2026-07-22",latestDate:"2026-08-06",prepay:"yes",other:"yes",bonded:"",contractNo:"CG2026-002",invoiceNo:"INV-2026-002",customsNo:"",declarer:"橙子多多",declarerTel:"13800138001",declDate:"2026-07-22",handleDate:"2026-07-22"}},{declNo:"2026072512345600000007",submitTime:"2026-07-25T08:55:00.000Z",status:"approved",reviewTime:"2026-07-25T13:20:00.000Z",teacherComment:"审核通过",studentId:"stu_橙子多多",studentName:"橙子多多",caseId:"case_a",caseTitle:"案例A：一般贸易出口货款",fields:{bankBizNo:"BK20260725000007",bankName:"中国工商银行北京分行",payeeName:"智达咨询（北京）有限公司",payeeCode:"91110108MA2YYYYYYY",payerName:"Global Trade Ltd.",payerCountry:"GBR",currency:"EUR",amount:"15000.00",settleAmt:"0.00",settleAcct:"6222021000123456789",cashAmt:"15000.00",cashAcct:"6222021000123456789",exchRate:"7.8500",settleMethodKeys:["tt"],txnCode:"121010",txnAmount:"15000.00",narrative:"一般贸易出口电子元器件的货款，合同号GT-2026-EU",date:"2026-07-25",latestDate:"2026-08-09",prepay:"",other:"",bonded:"",contractNo:"GT-2026-EU",invoiceNo:"GT-INV-042",customsNo:"110120260YYYYYYYYY",declarer:"橙子多多",declarerTel:"13800138001",declDate:"2026-07-25",handleDate:"2026-07-25"}}].forEach(function(t){e.push({id:"d_seed_"+e.length+"_"+Date.now(),declNo:t.declNo,submitTime:t.submitTime,status:t.status,teacherComment:t.teacherComment||"",returnedReason:"",reviewTime:t.reviewTime||"",studentId:t.studentId,studentName:t.studentName,caseId:t.caseId,caseTitle:t.caseTitle,fields:t.fields,isSeed:!0})}),o(e),r(i,!0)}}return{getCurrentUser:s,setCurrentUser:function(t){r(e,t)},clearCurrentUser:function(){localStorage.removeItem(e)},getAllDeclarations:c,createDeclaration:function(e){const t=s(),a=c(),n={id:"d_"+Date.now()+"_"+Math.floor(1e3*Math.random()),declNo:d(),submitTime:(new Date).toISOString(),status:"pending",teacherComment:"",returnedReason:"",reviewTime:"",studentId:t?t.id:"unknown",studentName:t?t.name:"未知学员",caseId:e.caseId||"",caseTitle:e.caseTitle||"自由练习",fields:e};return a.unshift(n),o(a),n},getDeclaration:function(e){return c().find(t=>t.id===e)||null},updateDeclaration:function(e,t){const a=c(),n=a.find(t=>t.id===e);return n?(n.fields=t,n.caseId=t.caseId||"",n.caseTitle=t.caseTitle||"自由练习",n.status="pending",n.teacherComment="",n.returnedReason="",n.reviewTime="",n.submitTime=(new Date).toISOString(),o(a),n):null},reviewDeclaration:function(e,t,a,n){const r=c(),s=r.find(t=>t.id===e);return s?(s.status="approve"===t?"approved":"returned",s.teacherComment=a||"",s.returnedReason="return"===t&&n||"",s.reviewTime=(new Date).toISOString(),o(r),s):null},deleteDeclaration:function(e){o(c().filter(t=>t.id!==e))},declarationsByStudent:function(e){return c().filter(t=>t.studentId===e)},seedSampleData:u,storageAvailable:function(){try{const e="__fx_store_test__";return localStorage.setItem(e,"1"),localStorage.removeItem(e),!0}catch(e){return!1}},exportBackup:function(){const e={version:1,app:"fx-decl-trainer",exportedAt:(new Date).toISOString(),user:s(),decls:c(),seq:n(a,0),seeded:n(i,!1)};return JSON.stringify(e,null,2)},importBackup:function(n){let s;try{s=JSON.parse(n)}catch(e){throw new Error("文件不是有效的 JSON 备份")}if(!s||!Array.isArray(s.decls))throw new Error("备份文件格式不正确");return s.user&&"object"==typeof s.user&&r(e,s.user),r(t,s.decls),"number"==typeof s.seq&&r(a,s.seq),r(i,!!s.seeded),s.user||null},resetDemoData:function(){o([]),r(i,!1),u()}}}();window.FX_STORE=FX_STORE;</script>
+<script>!function(){"use strict";const t=window.FX_DATA,e=window.FX_STORE,a=document.getElementById("main"),n=document.getElementById("sidebar"),d=document.getElementById("userbox"),l=document.getElementById("tabBar"),s=document.getElementById("uploadHint");let i=e.getCurrentUser(),c="",r="declare",o=1,u="declare",p="",v=!1,b="";const f=10;function m(t){return String(null==t?"":t).replace(/[&<>"']/g,function(t){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[t]})}function y(t){return t?new Date(t).toLocaleString("zh-CN"):"-"}function h(t){return"approved"===t?'<span class="tag approved">已通过</span>':"returned"===t?'<span class="tag returned">已退回</span>':'<span class="tag pending">待审核</span>'}function g(){const t=new Date;return t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0")+"-"+String(t.getDate()).padStart(2,"0")}function k(t){return document.getElementById(t)}function x(t){"#"+t===location.hash?A():location.hash=t}let _=!1;function E(){let t=k("storeWarn");t||(t=document.createElement("div"),t.id="storeWarn",t.className="store-warn",t.innerHTML="⚠️ 当前浏览器禁用了本地存储（可能是无痕/隐私模式），您的数据将无法保存，关闭页面后会丢失。请使用普通浏览器窗口，或用「导出备份」保存数据文件。",document.body.appendChild(t))}function L(){const t=e.getAllDeclarations();return i?t.filter(function(t){return t.studentId===i.id||!0===t.isSeed}):t}function w(){const t=document.getElementById("loginMount");t.innerHTML='<div class="login-wrap"><div class="login-brand"><div class="lb-logo">🌐</div><div class="lb-title">外汇收汇申报<br/>教学实训系统</div><div class="lb-desc">基于真实「数字外管」ASOne 平台流程<br/>面向学员的申报填报与审核演练环境</div><div class="lb-tips"><div class="lb-tip"><span class="lt-ic">📋</span>学员：填报涉外收入申报单</div><div class="lb-tip"><span class="lt-ic">✅</span>教师：审核申报并点评</div><div class="lb-tip"><span class="lt-ic">🔍</span>流程：从汇款解付到申报完成</div></div><div class="lb-foot">国家外汇管理局 · 国际收支申报教学平台</div></div><div class="login-card"><h2 class="login-h">账号登录</h2><div class="login-sub">请选择角色并输入姓名，进入对应工作台</div><div class="role-pick" id="rolePick"><div class="role-opt sel" data-role="student"><div class="ri">🧑‍🎓</div><div class="rn">学员</div><div class="sub">填写申报单</div></div><div class="role-opt" data-role="teacher"><div class="ri">👩‍🏫</div><div class="rn">教师</div><div class="sub">审核与点评</div></div></div><div class="field"><label>姓名 / 学号 <span class="req">*</span></label><input id="loginName" placeholder="请输入姓名或学号" autofocus /></div><div class="login-demo"><div class="ld-row"><span class="ld-dot stu"></span>学员演示账号：<b>橙子多多</b></div><div class="ld-row"><span class="ld-dot tea"></span>教师演示账号：<b>橘子多多</b></div></div><div class="quick-login" id="quickLogin"><button class="ql-btn" data-role="student" data-name="橙子多多">🧑‍🎓 以「橙子多多」进入</button><button class="ql-btn" data-role="teacher" data-name="橘子多多">👩‍🏫 以「橘子多多」进入</button></div><div class="btn-row"><button class="btn btn-primary login-btn" id="loginBtn">进入系统</button></div><div class="login-foot">数据自动保存在本机浏览器，下次打开自动登录 · 也可用右上角菜单「导出备份」保存到文件，防止数据丢失</div></div></div>';let a="student";function n(){const n=t.querySelector("#loginName").value.trim();if(!n)return void alert("请输入姓名或学号");i={role:a,name:n,id:"student"===a?"stu_"+n:"tea_"+n},e.setCurrentUser(i),t.innerHTML="",C(),A()}t.querySelectorAll(".role-opt").forEach(function(e){e.addEventListener("click",function(){t.querySelectorAll(".role-opt").forEach(function(t){t.classList.remove("sel")}),e.classList.add("sel"),a=e.getAttribute("data-role")})}),t.querySelector("#loginBtn").addEventListener("click",n);t.querySelector("#loginName").addEventListener("keydown",function(t){"Enter"===t.key&&n()}),t.querySelectorAll("#quickLogin .ql-btn").forEach(function(a){a.addEventListener("click",function(){const n=a.getAttribute("data-name"),d=a.getAttribute("data-role");i={role:d,name:n,id:("student"===d?"stu_":"tea_")+n},e.setCurrentUser(i),t.innerHTML="",C(),A()})}),e.storageAvailable()||E()}function C(){!function(){const t="teacher"===i.role?"教师":"学员";d.innerHTML='<div class="user-info"><div class="ui-name">当前用户：'+m(i.name)+"（"+t+'）</div></div><div class="user-menu-wrap"><button class="user-icon-btn" id="userMenuBtn" title="菜单">👤</button><div class="user-menu" id="userMenu" style="display:none;"><div class="um-item" data-act="export">⬇️ 导出数据备份</div><div class="um-item" data-act="import">⬆️ 导入数据备份</div><div class="um-item" data-act="reset">🔄 重置演示数据</div><div class="um-item um-danger" data-act="logout">🚪 退出登录</div></div></div><input type="file" id="importFile" accept="application/json,.json" style="display:none" />',k("userMenuBtn").addEventListener("click",function(t){t.stopPropagation();const e=k("userMenu");e.style.display="none"===e.style.display?"block":"none"}),k("userMenu").addEventListener("click",function(t){const l=t.target.closest(".um-item");if(!l)return;const s=l.getAttribute("data-act");k("userMenu").style.display="none","export"===s?function(){try{const t=e.exportBackup(),a=new Blob([t],{type:"application/json"}),n=URL.createObjectURL(a),d=document.createElement("a"),l=(new Date).toISOString().slice(0,10);d.href=n,d.download="收汇申报备份_"+l+".json",document.body.appendChild(d),d.click(),d.remove(),URL.revokeObjectURL(n),N("已导出备份文件")}catch(t){alert("导出失败："+t.message)}}():"import"===s?k("importFile").click():"reset"===s?function(){if(!confirm("确定要重置演示数据吗？\n将清空当前所有申报单（含您自己填报的），并恢复 7 条初始演示数据。"))return;e.resetDemoData(),N("演示数据已重置"),A()}():"logout"===s&&(e.clearCurrentUser(),i=null,location.hash="",a.innerHTML="",n.innerHTML="",d.innerHTML="",w())}),k("importFile").addEventListener("change",function(t){const a=t.target.files[0];if(!a)return;const n=new FileReader;n.onload=function(){!function(t){try{const a=e.importBackup(t);a&&(i=a),N("已导入备份，正在刷新…"),setTimeout(function(){location.reload()},600)}catch(t){alert("导入失败："+t.message)}}(String(n.result))},n.readAsText(a),t.target.value=""}),_||(_=!0,document.addEventListener("click",function(t){const e=k("userMenu");e&&("none"===e.style.display||t.target.closest(".user-menu-wrap")||(e.style.display="none"))})),e.storageAvailable()||E()}(),q(),S(T()),s.style.display="block"}function N(t){const e=k("saveState");e&&e.classList.add("saved"),function(t){let e=k("fxToast");e||(e=document.createElement("div"),e.id="fxToast",e.className="fx-toast",document.body.appendChild(e)),e.textContent=t,e.classList.add("show"),clearTimeout(e._timer),e._timer=setTimeout(function(){e.classList.remove("show")},2400)}(t)}function q(){l.querySelectorAll(".tab-item").forEach(function(t){t.classList.remove("active")});var t=l.querySelector('[data-tab="'+r+'"]');t&&t.classList.add("active")}function S(t){var e,a=(e=r,"student"===i.role?"business"===e||"declare"===e?[{label:"资源收藏夹",children:[]},{label:"涉外收入申报单",openDefault:!0,children:[{key:"student/declare",label:"申报信息录入"},{key:"student/edit",label:"申报信息修改"},{key:"student/feedback",label:"审核疑问反馈"}]},{label:"境内收入申报单",openDefault:!1,children:[{key:"",label:"管理信息录入（教学中暂不涉及）"}]}]:[{label:"资源收藏夹",children:[]},{label:"涉外/境内收入申报单",openDefault:!0,children:[{key:"query/declared-pending",label:"涉外收入已申报(待审核)信息查询"},{key:"query/declared-approved",label:"涉外收入已申报(已审核)信息查询"},{key:"query/declared-deleted",label:"涉外收入已删除申报单查询"},{key:"query/domestic-pending",label:"境内收入已申报(待审核)信息查询"},{key:"query/domestic-approved",label:"境内收入已申报(已审核)信息查询"},{key:"query/domestic-deleted",label:"境内收入已删除申报单查询"},{key:"query/workorder",label:"业务工单处理"}]}]:"business"===e||"declare"===e?[{label:"资源收藏夹",children:[]},{label:"涉外收入申报单",openDefault:!0,children:[{key:"teacher/review",label:"申报信息审核"},{key:"cases",label:"教学案例库"},{key:"guide",label:"流程指引与帮助"}]},{label:"境内收入申报单",openDefault:!1,children:[{key:"",label:"管理信息审核（教学中暂不涉及）"}]}]:[{label:"资源收藏夹",children:[]},{label:"涉外/境内收入申报单",openDefault:!0,children:[{key:"query/declared-pending",label:"涉外收入已申报(待审核)信息查询"},{key:"query/declared-approved",label:"涉外收入已申报(已审核)信息查询"},{key:"query/declared-deleted",label:"涉外收入已删除申报单查询"},{key:"query/domestic-pending",label:"境内收入已申报(待审核)信息查询"},{key:"query/domestic-approved",label:"境内收入已申报(已审核)信息查询"},{key:"query/domestic-deleted",label:"境内收入已删除申报单查询"},{key:"query/workorder",label:"业务工单处理"}]}]),d='<div class="sidebar-search"><input placeholder="搜索" /></div>';a.forEach(function(e){d+=function(t,e){if(t.arrowOnly)return'<div class="tree-node"><div class="tree-parent"><span class="arrow">▶</span><span>'+m(t.label)+"</span></div></div>";if(!t.children||!t.children.length)return'<div class="tree-node"><div class="tree-leaf-simple"><span>📁</span><span>'+m(t.label)+"</span></div></div>";var a=!!t.openDefault,n=a?" open":"",d=a?" show":"",l=a?"▼":"▶",s=t.children.map(function(t){return'<div class="tree-leaf'+(t.key===e?" active":"")+'" data-key="'+(t.key||"")+'"><span class="leaf-dot"></span><span>'+m(t.label)+"</span></div>"}).join("");return'<div class="tree-node"><div class="tree-parent'+n+'"><span class="arrow">'+l+"</span><span>"+m(t.label)+'</span></div><div class="tree-children'+d+'">'+s+"</div></div>"}(e,t)}),n.innerHTML=d,n.querySelectorAll(".tree-parent").forEach(function(t){t.addEventListener("click",function(){var e=t.closest(".tree-node").querySelector(".tree-children");if(e){var a=e.classList.contains("show"),n=t.querySelector(".arrow");n&&(n.textContent=a?"▶":"▼"),e.classList.toggle("show"),t.classList.toggle("open")}})}),n.querySelectorAll(".tree-leaf[data-key]").forEach(function(t){t.addEventListener("click",function(){var e=t.getAttribute("data-key");e&&x(e)})})}function T(){return(location.hash||"").replace(/^#\/?/,"").split("/").filter(Boolean).join("/")}function A(){if(!i)return void w();const t=T();if(r=function(t){return"teacher/review"===t||"student/declare"===t||"student/edit"===t||"student/feedback"===t?"declare":0===t.indexOf("query/")||"teacher/stats"===t||"student/mine"===t?"query":"business"}(t),"student"===i.role&&0===t.indexOf("teacher"))return C(),void D();if("teacher"===i.role&&0===t.indexOf("student"))return C(),void D();const e={"student/declare":M,"student/new":j,"student/edit":B,"student/feedback":Q,"student/mine":P,"teacher/review":z,"teacher/stats":K,cases:Z,guide:J,"query/declared-pending":tt,"query/declared-approved":et,"query/declared-deleted":at,"query/domestic-pending":nt,"query/domestic-approved":dt,"query/domestic-deleted":lt,"query/workorder":st};C();const a=e[t];a?a():D()}function D(){const t=e.getAllDeclarations();let n='<div class="page-head"><h2>欢迎，'+m(i.name)+"</h2><p>本系统为外汇收汇申报教学实训平台，所有数据为本地演示数据。</p></div>";if("student"===i.role){const t=L(),e=t.filter(function(t){return"pending"===t.status}).length,a=t.filter(function(t){return"approved"===t.status}).length,d=t.filter(function(t){return"returned"===t.status}).length;n+='<div class="card"><h3>📌 我的申报概况</h3><div class="kv"><dt>申报总数</dt><dd>'+t.length+" 笔</dd><dt>待审核</dt><dd>"+e+" 笔</dd><dt>已通过</dt><dd>"+a+" 笔</dd><dt>已退回</dt><dd>"+d+" 笔</dd></div></div>",n+='<div class="card"><h3>🚀 快捷入口</h3><div class="btn-row"><button class="btn btn-primary" onclick="location.hash=\'student/declare\'">登入申报信息录入</button><button class="btn btn-ghost-c" onclick="location.hash=\'cases\'">浏览案例库</button><button class="btn btn-ghost-c" onclick="location.hash=\'student/mine\'">查看申报跟踪</button><button class="btn btn-ghost-c" onclick="location.hash=\'guide\'">查看申报流程</button></div></div>'}else{const e=t.filter(function(t){return"pending"===t.status}).length;n+='<div class="card"><h3>📌 待办概况</h3><div class="kv"><dt>全部申报</dt><dd>'+t.length+" 笔</dd><dt>待审核</dt><dd>"+e+" 笔</dd></div></div>",n+='<div class="card"><h3>🚀 快捷入口</h3><div class="btn-row"><button class="btn btn-primary" onclick="location.hash=\'teacher/review\'">前往审核</button><button class="btn btn-ghost-c" onclick="location.hash=\'teacher/stats\'">教学统计</button><button class="btn btn-ghost-c" onclick="location.hash=\'cases\'">案例库</button></div></div>'}a.innerHTML=n}function M(){o=1,u="declare",p="",O()}function B(){o=1,u="edit",p="",O()}function O(){const t=document.getElementById("filterDateFrom"),n=document.getElementById("filterDateTo"),d=t&&t.value?t.value:"2026-07-01",l=n&&n.value?n.value:"2026-07-31";let s=L();s=s.filter(function(t){const e=t.fields.date||"";return!(d&&e&&e<d)&&!(l&&e&&e>l)});let i='<div class="sub-tab-bar"><button class="sub-tab'+("edit"===u?" active":"")+'" id="subTabEdit">申报信息修改</button><button class="sub-tab'+("declare"===u?" active":"")+'" id="subTabDeclare">申报信息录入</button></div>';const r="edit"===u?"申报信息修改":"申报信息录入";if(i+='<div class="page-title">'+r+'<span class="req-star">✱</span></div>',i+='<div class="breadcrumb">当前位置：<span class="bc-current">申报单管理-&gt;涉外收入申报-&gt;'+r+"</span></div>",i+='<div class="filter-bar"><label>收付工日期</label><input type="date" id="filterDateFrom" value="'+d+'" /><span class="sep">到</span><input type="date" id="filterDateTo" value="'+l+'" /><label style="margin-left:8px;">笔数(S)</label><input type="text" id="filterCount" placeholder="" style="width:50px;" /><button class="btn-query" id="btnQuery">查询(Q)</button></div>',i+='<div class="data-table-wrap"><table class="data-table"><thead><tr><th>序号</th><th>申报号码</th><th>收款人名称</th><th>付款人名称</th><th>收入款币种代码</th><th>收入金额</th><th>申报日期</th><th>状态</th><th>操作</th></tr></thead><tbody>',s.length){const t=(o-1)*f;s.slice(t,t+f).forEach(function(e,a){i+='<tr><td class="col-index">'+(t+a+1)+"</td><td>"+m(e.declNo)+"</td><td>"+m(e.fields.payeeName)+"</td><td>"+m(e.fields.payerName)+"</td><td>"+m(e.fields.currency)+"</td><td>"+m(e.fields.amount)+"</td><td>"+m(e.fields.date)+"</td><td>"+("declare"===u?"approved"===e.status?"已申报":"returned"===e.status?"已退回":"待申报":h(e.status))+'</td><td class="col-actions">'+("edit"===u?'<button class="btn btn-warn btn-sm" data-edit="'+e.id+'">修改</button>':"approved"===e.status?'<button class="btn btn-ghost-c btn-sm" data-view="'+e.id+'">查看</button>':'<button class="btn btn-primary btn-sm" data-enter="'+e.id+'">录入</button> <button class="btn btn-ghost-c btn-sm" data-view="'+e.id+'">查看</button>')+"</td></tr>"})}else{i+='<tr><td colspan="9" style="padding:40px;color:#999;">'+("edit"===u?"暂无申报记录可修改。可前往「案例库」选择案例填报后，在此直接修改。":"暂无申报记录。可前往「案例库」选择案例进行填报练习。")+"</td></tr>"}i+="</tbody></table></div>";const b=Math.max(1,Math.ceil(s.length/f));i+='<div class="pagination"><span class="page-info">第 '+o+' 页</span><button class="page-btn" id="pgFirst"'+(o<=1?" disabled":"")+'>首页</button><button class="page-btn" id="pgPrev"'+(o<=1?" disabled":"")+'>上一页</button><button class="page-btn" id="pgNext"'+(o>=b?" disabled":"")+'>下一页</button><button class="page-btn" id="pgLast"'+(o>=b?" disabled":"")+">尾页</button></div>",a.innerHTML=i,k("subTabEdit")&&k("subTabEdit").addEventListener("click",function(){u="edit",o=1,O()}),k("subTabDeclare")&&k("subTabDeclare").addEventListener("click",function(){u="declare",o=1,O()}),k("btnQuery").addEventListener("click",function(){o=1,O()}),k("pgFirst")&&k("pgFirst").addEventListener("click",function(){o>1&&(o=1,O())}),k("pgPrev")&&k("pgPrev").addEventListener("click",function(){o>1&&(o--,O())}),k("pgNext")&&k("pgNext").addEventListener("click",function(){o<b&&(o++,O())}),k("pgLast")&&k("pgLast").addEventListener("click",function(){o<b&&(o=b,O())}),a.querySelectorAll("[data-view]").forEach(function(t){t.addEventListener("click",function(){U(t.getAttribute("data-view"))})}),a.querySelectorAll("[data-edit]").forEach(function(t){t.addEventListener("click",function(){V(t.getAttribute("data-edit"))})}),a.querySelectorAll("[data-enter]").forEach(function(t){t.addEventListener("click",function(){!function(t){if(!e.getDeclaration(t))return;p=t,v=!0,c="",x("student/new")}(t.getAttribute("data-enter"))})})}l.addEventListener("click",function(t){var e,a=t.target.closest(".tab-item");a&&a.dataset.tab&&(r=a.dataset.tab,q(),e=r,S(""),"business"===e?D():"declare"===e?"student"===i.role?x("student/declare"):x("teacher/review"):"query"===e&&x("query/declared-pending"))});const I=[{key:"tt",label:"电汇"},{key:"lc",label:"信用证"},{key:"dc",label:"托收"},{key:"other",label:"其他"}],H=[{key:"forfaiting",label:"福费廷"},{key:"export_factoring",label:"出口保理"},{key:"export_discount",label:"出口贴现"},{key:"other_trade_finance",label:"其他贸易融资"},{key:"export_mortgage",label:"出口押汇"}];var F={df_payerCountry:1,_prepay:1,_bonded:1,df_txnCode:1,df_txnAmount:1,df_narrative:1};function R(e,a){var n=e&&e.fields||{};function d(t){return!!a&&!!F[t]}function l(t,e){var a="value-cell";return e&&(a+=" full-width"),'<td class="'+a+'" colspan="'+(e?"5":"1")+'">'+t+"</td>"}function s(t,e,a,n){var l=a||"text",s=n||"";return d(t)?'<input id="'+t+'" type="'+l+'" value="'+m(e||"")+'" '+s+" />":'<span class="ro-val">'+m(e||"")+"</span>"}function c(t,e,a){var n=a||2;return d(t)?'<textarea id="'+t+'" class="opinion-textarea" rows="'+n+'">'+m(e||"")+"</textarea>":'<textarea class="opinion-textarea readonly" readonly>'+m(e||"")+"</textarea>"}function r(t,e,a){return d(a)?'<input type="checkbox" name="'+t+'" value="1"'+(e?" checked":"")+" />":'<input type="checkbox" disabled'+(e?" checked":"")+" />"}var o,u,b,f,y,h,k,x,_,E,L="";function w(t){return'<span class="ro-val">'+m(t||"")+"</span>"}function C(t,e,a,n){return d(n)?'<input type="radio" name="'+t+'" value="'+e+'"'+(a?" checked":"")+" />":'<input type="radio" disabled'+(a?" checked":"")+" />"}return L+='<div class="decl-toolbar"><button class="btn-back" id="btnBackDecl">返回(F)</button></div>',L+='<div class="decl-form"><table class="decl-form-table">',L+="<tr>",L+='<td class="label-cell">申报区编号</td>',L+=l(w(n.declZoneNo)),L+='<td class="label-cell">申报号码</td>',L+=l(s("df_declNo",n.declNo||(e?e.declNo:""),"text",'readonly style="background:#eee;"')),L+='<td class="label-cell">银行业务编号</td>',L+=l(s("df_bankBizNo",n.bankBizNo||"","text")),L+="</tr>",L+="<tr>",L+='<td class="label-cell">申报日期</td>',L+=l(s("df_date",n.date||g(),"date")),L+='<td class="label-cell">申报人编号</td>',L+=l(w(n.declarantNo)),L+='<td class="label-cell">解付银行行号/标识码</td>',L+=l(w(n.payBankNo)),L+="</tr>",L+="<tr>",L+='<td class="label-cell">主体标识码（付款人代码）</td>',L+=l(s("df_payeeCode",n.payeeCode||"","text")),L+='<td class="label-cell">个人身份证件号码/组织机构代码</td>',L+=l(s("df_orgCode",n.orgCode||"","text")),L+='<td class="label-cell">申报方式</td>',L+=l('<div class="checkbox-group">'+r("df_centralized","yes"===n.centralized,"_readonly")+" 集中申报 "+r("df_domestic","yes"===n.domestic,"_readonly")+" 境内申报</div>"),L+="</tr>",L+="<tr>",L+='<td class="label-cell">结算方式</td>',L+=l(function(t,e){const a=e||"",n="_readonly"===t?" disabled":"";return'<div class="checkbox-group">'+I.map(function(t){const e=-1!==a.indexOf(t.key)?" checked":"";return'<label><input type="checkbox" name="settleMethod" value="'+t.key+'"'+e+n+" /> "+m(t.label)+"</label>"}).join("")+"</div>"}("_readonly",n.settleMethodKeys),!0),L+="</tr>",L+="<tr>",L+='<td class="label-cell">收入款币种及金额</td>',L+=l(function(t,e,a){if(!d(t))return'<span class="ro-val">'+m(e||"-")+"</span>";var n='<select id="'+t+'"><option value="">— 请选择 —</option>';return a.forEach(function(t){var a="string"==typeof t?t:t.value||t,d="string"==typeof t?t:t.label||t,l=a===e?" selected":"";n+='<option value="'+m(a)+'"'+l+">"+m(d)+"</option>"}),n+="</select>"}("df_currency",n.currency,t.CURRENCIES)+" "+s("df_amount",n.amount||"","number",'style="width:110px;"')),L+='<td class="label-cell">账号/银行卡号</td>',L+='<td class="value-cell" colspan="3">'+s("df_accountNo",n.accountNo||"","text")+"</td>",L+="</tr>",L+="<tr>",L+='<td class="label-cell" style="padding-left:14px;">其中：结汇金额</td>',L+=l(s("df_settleAmt",n.settleAmt||"0.00","text")),L+='<td class="label-cell" style="padding-left:14px;">其中：现汇金额</td>',L+=l(s("df_cashAmt",n.cashAmt||"","text")),L+='<td class="label-cell" style="padding-left:14px;">其中：其他金额</td>',L+=l(s("df_otherAmt",n.otherAmt||"","text")),L+="</tr>",L+="<tr>",L+='<td class="label-cell" style="padding-left:14px;">结汇账号/卡号</td>',L+=l(s("df_settleAcct",n.settleAcct||"","text")),L+='<td class="label-cell" style="padding-left:14px;">现汇账号/卡号</td>',L+=l(s("df_cashAcct",n.cashAcct||"","text")),L+='<td class="label-cell">国内银行托收币种及金额</td>',L+=l(s("df_domesticColl",n.domesticColl||"","text")),L+="</tr>",L+="<tr>",L+='<td class="label-cell">收款人名称</td>',L+=l(s("df_payeeName",n.payeeName||"","text"),!0),L+="</tr>",L+="<tr>",L+='<td class="label-cell">收入类型</td>',L+=l(function(t,e){const a=e||"",n="_readonly"===t?" disabled":"";return'<div class="checkbox-group">'+H.map(function(t){const e=-1!==a.indexOf(t.key)?" checked":"";return'<label><input type="checkbox" name="incomeType" value="'+t.key+'"'+e+n+" /> "+m(t.label)+"</label>"}).join("")+"</div>"}("_readonly",n.incomeTypeKeys),!0),L+="</tr>",L+="<tr>",L+='<td class="label-cell">付款人名称</td>',L+=l(s("df_payerName",n.payerName||"","text"),!0),L+="</tr>",L+="<tr>",L+='<td class="label-cell">付款人常驻国家（地区）及代码<span class="req-mark">*</span></td>',L+=l(function(t,e,a){var n=e||"",l="";if(n&&n.length>=2){var s=a.find(function(t){return t.value===n||t.value.toUpperCase()===n.toUpperCase()});s?(l=s.label.replace(n+" ","").replace(n,""),0===s.label.indexOf(n)&&(l=s.label.substring(n.length).trim())):l="(未知代码)"}if(!d(t))return'<span class="ro-val">'+m(n)+(l?" · "+m(l):"")+"</span>";var i='<option value="">— 请选择国家/地区 —</option>';return a.forEach(function(t){i+='<option value="'+m(t.value)+'"'+(t.value===n?" selected":"")+">"+m(t.label)+"</option>"}),'<select id="'+t+'" class="country-select">'+i+"</select>"}("df_payerCountry",n.payerCountry,t.COUNTRIES)),L+='<td class="label-cell">如本笔款项为预收货款或退款，请选择</td>',L+=l(C("df_prepay","credit","refund"!==n.prepay,"_prepay")+" 预收 "+C("df_prepay","refund","refund"===n.prepay,"_prepay")+" 退款"),L+='<td class="label-cell">本笔款项是否为保税货物项下收入</td>',L+=l(C("df_bonded","yes","yes"===n.bonded,"_bonded")+" 是 "+C("df_bonded","no","yes"!==n.bonded,"_bonded")+" 否"),L+="</tr>",L+="<tr>",L+='<td class="label-cell">交易编码<span class="req-mark">*</span></td>',L+='<td colspan="3" class="value-cell">'+(o="df_txnCode",u=n.txnCode,b=t.TXN_CODES,f="code",y="name",h=6,k="6位编码",x=u||"",_=b.find(function(t){return String(t[f]).toUpperCase()===String(x).toUpperCase()}),E=_?_[y]:x?"(未知代码)":"",(d(o)?'<div class="country-code-input"><input id="'+o+'" type="text" value="'+m(x)+'" maxlength="'+(h||6)+'" style="width:100px;text-transform:uppercase;font-weight:700;" placeholder="'+(k||"编码")+'" /><span class="country-name-display" id="'+o+'_name">'+(E?m(E):'<span class="hint-text">输入代码显示名称</span>')+"</span></div>":'<span class="ro-val">'+m(x)+(E?" · "+m(E):"")+"</span>")+"</td>"),L+='<td class="label-cell">相应币种及金额</td>',L+=l(s("df_txnAmount",n.txnAmount||n.amount||"","text")),L+="</tr>",L+="<tr>",L+='<td class="label-cell">交易附言<span class="req-mark">*</span></td>',L+='<td colspan="5" class="value-cell">'+c("df_narrative",n.narrative||"",3)+(a?'<div class="narrative-hint" id="df_narrative_hint"></div>':"")+"</td>",L+="</tr>",L+="<tr>",L+='<td class="label-cell">银行附言</td>',L+=l(s("df_bankRemark",n.bankRemark||"","text"),!0),L+="</tr>",L+="<tr>",L+='<td class="label-cell">填报人</td>',L+=l(s("df_declarer",n.declarer||(i?i.name:""),"text")),L+='<td class="label-cell">填报人电话</td>',L+=l(s("df_declarerTel",n.declarerTel||"","text")),L+='<td class="label-cell">填报日期</td>',L+=l(s("df_declDate",n.declDate||g(),"date")),L+="</tr>",L+="<tr>",L+='<td class="label-cell">银行经办员</td>',L+=l(s("df_bankOperator",n.bankOperator||(a?"":e&&e.teacherName||""),"text")),L+='<td class="label-cell">经办人</td>',L+=l(s("df_handler",n.handler||"","text")),L+='<td class="label-cell">经办日期</td>',L+=l(s("df_handleDate",n.handleDate||g(),"date")),L+="</tr>",L+="<tr>",L+='<td class="label-cell">企业意见</td>',L+='<td colspan="5" class="value-cell readonly">'+c("df_enterpriseOpinion",n.enterpriseOpinion||(e&&"approved"===e.status?"审核通过":""),2)+"</td>",L+="</tr>",L+="<tr>",L+='<td class="label-cell">银行意见</td>',L+='<td colspan="5" class="value-cell readonly">'+c("df_bankOpinion",n.bankOpinion||"",2)+"</td>",L+="</tr>",L+="<tr>",L+='<td class="label-cell">外汇局意见</td>',L+='<td colspan="5" class="value-cell readonly">'+c("df_safeOpinion",n.safeOpinion||e&&"returned"===e.status&&e.returnedReason||"",2)+"</td>",L+="</tr>",L+="</table></div>",a&&(L+='<div class="btn-row" style="margin-top:14px;"><button class="btn btn-primary" id="submitDeclBtn">'+(p&&!v?"保存修改":"提交申报")+'</button><button class="btn btn-ghost-c" id="resetDeclBtn">'+(p?"还原":"重置")+"</button></div>"),L}function j(){var n=!!p;p||(v=!1);var d=null,l={};n?l=(d=e.getDeclaration(p))&&d.fields||{}:l=(c&&t.CASES.find(function(t){return t.id===c})||{}).prefill||{};var s=v?"涉外收入申报单 — 录入":n?"涉外收入申报单 — 修改":"涉外收入申报单 — 新增";function i(){var e=k("df_narrative_hint");if(e){var a=k("df_txnCode")?k("df_txnCode").value.toUpperCase().trim():"",n=t.DECL_RULES.find(function(t){return t.code===a});n&&n.narrativeTpl?(e.innerHTML="附言格式参考：<code>"+m(n.narrativeTpl)+"</code>",e.style.display="block"):e.style.display="none"}}a.innerHTML='<div class="page-title">'+m(s)+'<span class="req-star">✱</span></div><div class="breadcrumb">当前位置：<span class="bc-current">申报单管理-&gt;涉外收入申报-&gt;'+m(s)+"</span></div>"+(v?'<div class="alert info">当前为<strong>录入模式</strong>：仅需核对并补全<strong>付款人国别、预收货款/退款、保税货物、交易编码及金额、交易附言</strong>这几处可填写字段，其余灰色区域均为银行预填信息，无需修改。</div>':n?'<div class="alert info">当前为<strong>修改模式</strong>：修改保存后该申报单将重新提交审核。</div>':'<div class="alert info">提示：等值 5000 美元以下的涉外收入可免逐笔申报；本实训以逐笔申报为练习目标。</div>')+R({fields:l,declNo:n?d&&d.declNo:""},!0),k("btnBackDecl").addEventListener("click",function(){p="",x("student/declare")});var r=k("df_txnCode");r&&(r.addEventListener("input",function(){var e=this.value.toUpperCase().trim(),a=k("df_txnCode_name");if(a){if(e.length>=3){var n=t.TXN_CODES.find(function(t){return t.code===e});n?(a.textContent=n.name,a.style.color="#222"):6===e.length?(a.textContent="(未知编码)",a.style.color="#c00"):a.innerHTML='<span class="hint-text">继续输入...</span>'}else a.innerHTML='<span class="hint-text">输入代码显示名称</span>';i()}}),r.value?r.dispatchEvent(new Event("input")):i()),n?d&&(l.caseId=d.caseId||""):(k("f_caseId")&&(k("f_caseId").value=c||""),c=""),k("submitDeclBtn")&&k("submitDeclBtn").addEventListener("click",function(){var n=function(){var e=document.querySelectorAll('input[name="settleMethod"]:checked'),a=Array.prototype.map.call(e,function(t){return t.value}).join(","),n=[];e.forEach(function(t){var e=I.find(function(e){return e.key===t.value});e&&n.push(e.label)});var d=document.querySelectorAll('input[name="incomeType"]:checked'),l=Array.prototype.map.call(d,function(t){return t.value}).join(","),s="";k("df_payeeResident")&&k("df_payeeResident").checked&&(s="resident"),k("df_payeeNonResident")&&k("df_payeeNonResident").checked&&(s="nonresident");var i=document.querySelector('input[name="df_bonded"]:checked'),r=i?i.value:"",o=document.querySelector('input[name="df_prepay"]:checked'),u=o?o.value:"",p=k("df_txnCode")?k("df_txnCode").value:"";return t.TXN_CODES.find(function(t){return t.code===p}),{bankBizNo:v("df_bankBizNo"),bankName:v("df_bankName"),payeeResident:s,idCardNo:v("df_idCardNo"),orgCode:v("df_orgCode"),payeeName:v("df_payeeName"),settleMethodKeys:a,settleMethod:n.join("/")||v("f_settleMethod")||"",exchRate:v("df_exchRate"),currency:v("df_currency"),amount:v("df_amount"),accountNo:v("df_accountNo"),settleAmt:v("df_settleAmt"),settleAcct:v("df_settleAcct"),cashAmt:v("df_cashAmt"),cashAcct:v("df_cashAcct"),otherAmt:v("df_otherAmt"),domesticColl:v("df_domesticColl"),payerName:v("df_payerName"),incomeTypeKeys:l,payerCountry:v("df_payerCountry"),date:v("df_date"),latestDate:v("df_latestDate"),prepay:u,other:"",bonded:r,safeRefNo:v("df_safeRefNo"),txnCode:p,txnAmount:v("df_txnAmount"),narrative:v("df_narrative"),declarer:v("df_declarer"),declarerTel:v("df_declarerTel"),declDate:v("df_declDate"),handleDate:v("df_handleDate"),bankOperator:v("df_bankOperator"),handler:v("df_handler"),enterpriseOpinion:v("df_enterpriseOpinion"),bankOpinion:v("df_bankOpinion"),safeOpinion:v("df_safeOpinion"),receiveAccount:v("df_accountNo"),payeeCode:v("df_payeeCode"),bankRemark:v("df_bankRemark"),customsNo:"",remark:"",caseId:c||"",caseTitle:""};function v(t){var e=k(t);return e?e.value.trim():""}}(),d=t.CASES.find(function(t){return t.id===n.caseId});d&&(n.caseTitle=d.title);var l=function(t){var e=[];function a(t){e.push(t)}return t.payerCountry||a("请填写付款人常驻国家（地区）及代码"),t.txnCode||a("请填写交易编码"),(!t.txnAmount||isNaN(parseFloat(t.txnAmount))||parseFloat(t.txnAmount)<=0)&&a("相应币种及金额须为正数"),t.narrative||a("请填写交易附言"),"refund"===t.prepay&&t.narrative&&-1===t.narrative.indexOf("退款")&&a("已选择“退款”，交易附言须包含“退款”字样"),e}(n);if(l.length){var s='<div class="alert warn" id="submitErr"><strong>⚠️ 表单存在 '+l.length+' 处问题，请修正后再提交：</strong><ul style="margin:6px 0 0 18px;line-height:1.7;">'+l.map(function(t){return"<li>"+m(t)+"</li>"}).join("")+"</ul></div>";return a.insertAdjacentHTML("afterbegin",s),void setTimeout(function(){var t=k("submitErr");t&&t.scrollIntoView({behavior:"smooth"})},30)}p?(e.updateDeclaration(p,n),p="",v=!1,u="edit"):(e.createDeclaration(n),v=!1),x("student/declare")}),k("resetDeclBtn")&&k("resetDeclBtn").addEventListener("click",function(){x("student/new")})}function U(t){var n=e.getDeclaration(t);if(n){var d="涉外收入已申报("+("approved"===n.status?"已审核（已通过）":"returned"===n.status?"已审核（已退回）":"待审核")+")详细信息";a.innerHTML='<div class="page-title">'+m(d)+'<span class="req-star">✱</span></div><div class="breadcrumb">当前位置：<span class="bc-current">申报单管理-&gt;涉外收入申报-&gt;'+m(d)+"</span></div>"+R(n,!1),k("btnBackDecl").addEventListener("click",function(){A()})}else a.innerHTML='<div class="card"><div class="empty">未找到该申报单记录。</div></div>'}function Q(){a.innerHTML='<div class="page-title">审核疑问反馈</div><div class="breadcrumb">当前位置：<span class="bc-current">申报单管理-&gt;涉外收入申报-&gt;审核疑问反馈</span></div><div class="card"><h3>提交疑问</h3><p style="color:var(--c-muted);font-size:13px;margin-bottom:12px;">如果您对教师的审核结果有疑问，可以在此提交反馈。</p><div class="field"><label>关联申报号码</label><select id="fb_declNo"><option value="">— 选择申报单 —</option>'+L().map(function(t){return'<option value="'+t.id+'">'+m(t.declNo)+" ("+m(t.fields.payeeName)+")</option>"}).join("")+'</select></div><div class="field"><label>疑问内容 *</label><textarea id="fb_content" rows="4" placeholder="请描述您的疑问..."></textarea></div><div class="btn-row"><button class="btn btn-primary" id="fbSubmit">提交反馈</button></div></div>',k("fbSubmit").addEventListener("click",function(){k("fb_content").value.trim()?(alert("反馈已提交！（教学演示模式，数据保存在本地）"),x("student/feedback")):alert("请填写疑问内容")})}function P(){const t=L();a.innerHTML='<div class="page-head"><h2>📂 我的申报</h2><p>查看您提交的申报单及教师审核结果。</p></div>'+X(t,"student"),W()}function X(e,a){if(!e.length)return'<div class="card"><div class="empty">暂无申报记录。</div></div>';return'<div class="card"><table class="tbl"><thead><tr><th>申报号码</th><th>案例</th><th>收款人</th><th>金额</th><th>交易编码</th><th>状态</th><th>操作</th></tr></thead><tbody>'+e.map(function(e){const n=t.TXN_CODES.find(function(t){return t.code===e.fields.txnCode}),d=n?n.code+" "+n.name:e.fields.txnCode||"-";let l="";return"student"===a?(l='<button class="btn btn-ghost-c btn-sm" data-view="'+e.id+'">查看</button>',"returned"===e.status&&(l+=' <button class="btn btn-warn btn-sm" data-edit="'+e.id+'">修改重报</button>')):l='<button class="btn btn-primary btn-sm" data-review="'+e.id+'">审核</button> <button class="btn btn-ghost-c btn-sm" data-view="'+e.id+'">查看</button>',"<tr><td>"+m(e.declNo)+"</td><td>"+m(e.caseTitle)+"</td><td>"+m(e.fields.payeeName)+"</td><td>"+m(e.fields.currency)+" "+m(e.fields.amount)+'</td><td><span class="tag cat">'+m(d)+"</span></td><td>"+h(e.status)+"</td><td>"+l+"</td></tr>"}).join("")+"</tbody></table></div>"}function z(){const t=e.getAllDeclarations();a.innerHTML='<div class="page-head"><h2>✅ 申报信息审核</h2><p>查看学员提交的申报单，进行通过 / 退回，并填写评语。</p></div>'+X(t,"teacher"),W()}function K(){const t=e.getAllDeclarations(),n=t.length,d=t.filter(function(t){return"approved"===t.status}).length,l=t.filter(function(t){return"returned"===t.status}).length,s=n-d-l,i={};t.forEach(function(t){i[t.studentName]=i[t.studentName]||{total:0,approved:0,returned:0,pending:0},i[t.studentName].total++,i[t.studentName][t.status]++});let c=Object.keys(i).map(function(t){const e=i[t];return"<tr><td>"+m(t)+"</td><td>"+e.total+"</td><td>"+e.approved+"</td><td>"+e.returned+"</td><td>"+e.pending+"</td></tr>"}).join("")||'<tr><td colspan="5" class="empty">暂无学员申报</td></tr>';a.innerHTML='<div class="page-head"><h2>📊 教学统计</h2><p>整体申报与审核情况概览。</p></div><div class="card"><h3>整体概况</h3><div class="kv"><dt>申报总数</dt><dd>'+n+"</dd><dt>已通过</dt><dd>"+d+"</dd><dt>已退回</dt><dd>"+l+"</dd><dt>待审核</dt><dd>"+s+'</dd></div></div><div class="card"><h3>按学员统计</h3><table class="tbl"><thead><tr><th>学员</th><th>申报数</th><th>通过</th><th>退回</th><th>待审</th></tr></thead><tbody>'+c+"</tbody></table></div>"}function W(){a.querySelectorAll("[data-review]").forEach(function(t){t.addEventListener("click",function(){!function(t){const a=e.getDeclaration(t);if(!a)return;const n=G('<h2>审核申报单</h2><div class="sub">申报号码：'+m(a.declNo)+" · 学员："+m(a.studentName)+"</div>"+Y(a)+'<div class="section-title">审核意见</div><div class="field"><label>评语 / 退回原因</label><textarea id="revComment" placeholder="通过时填写鼓励或要点提示；退回时请说明原因"></textarea></div><div class="btn-row"><button class="btn btn-ok" id="approveBtn">通过</button><button class="btn btn-danger" id="returnBtn">退回</button><button class="btn btn-ghost-c" id="cancelBtn">取消</button></div>');n.querySelector("#approveBtn").addEventListener("click",function(){e.reviewDeclaration(t,"approve",n.querySelector("#revComment").value.trim(),""),n.remove(),A()}),n.querySelector("#returnBtn").addEventListener("click",function(){const a=n.querySelector("#revComment").value.trim();a?(e.reviewDeclaration(t,"return","",a),n.remove(),A()):alert("退回时必须填写原因")}),n.querySelector("#cancelBtn").addEventListener("click",function(){n.remove()})}(t.getAttribute("data-review"))})}),a.querySelectorAll("[data-view]").forEach(function(t){t.addEventListener("click",function(){U(t.getAttribute("data-view"))})}),a.querySelectorAll("[data-edit]").forEach(function(t){t.addEventListener("click",function(){V(t.getAttribute("data-edit"))})})}function Y(e){const a=t.TXN_CODES.find(function(t){return t.code===e.fields.txnCode}),n=a?a.code+" "+a.name+"（"+a.cat+"）":e.fields.txnCode||"-";return'<div class="kv"><dt>申报号码</dt><dd>'+m(e.declNo)+"</dd><dt>关联案例</dt><dd>"+m(e.caseTitle)+"</dd><dt>申报日期</dt><dd>"+m(e.fields.date)+"</dd><dt>收款账号</dt><dd>"+m(e.fields.receiveAccount)+"</dd><dt>收款人</dt><dd>"+m(e.fields.payeeName)+"（"+m(e.fields.payeeCode)+"）</dd><dt>付款人</dt><dd>"+m(e.fields.payerName)+" / "+m(e.fields.payerCountry)+"</dd><dt>币种金额</dt><dd>"+m(e.fields.currency)+" "+m(e.fields.amount)+"</dd><dt>结算方式</dt><dd>"+m(e.fields.settleMethod)+"</dd><dt>交易编码</dt><dd>"+m(n)+"</dd><dt>交易附言</dt><dd>"+m(e.fields.narrative)+"</dd><dt>报关单号</dt><dd>"+m(e.fields.customsNo)+"</dd><dt>备注</dt><dd>"+m(e.fields.remark)+"</dd><dt>状态</dt><dd>"+h(e.status)+"</dd><dt>提交时间</dt><dd>"+y(e.submitTime)+"</dd>"+(e.reviewTime?"<dt>审核时间</dt><dd>"+y(e.reviewTime)+"</dd>":"")+(e.teacherComment?"<dt>教师评语</dt><dd>"+m(e.teacherComment)+"</dd>":"")+(e.returnedReason?"<dt>退回原因</dt><dd>"+m(e.returnedReason)+"</dd>":"")+"</div>"}function G(t){const e=document.createElement("div");return e.className="modal-mask",e.innerHTML='<div class="modal">'+t+"</div>",document.body.appendChild(e),e.addEventListener("click",function(t){t.target===e&&e.remove()}),e}function V(t){e.getDeclaration(t)&&(p=t,v=!1,c="",x("student/new"))}function Z(){const e="student"===i.role;let n=t.CASES.map(function(t){const a=e?'<button class="btn btn-primary btn-sm" data-caseto="'+t.id+'">以此为模板填报</button>':'<span class="tag cat">'+m(t.cat)+"</span>";return'<div class="case-card"><div class="case-top"><span class="case-title">'+m(t.title)+'</span><span class="tag cat">'+m(t.level)+'</span></div><div class="case-bg">'+m(t.background)+'</div><div class="section-title">填报要点</div><ul class="kp">'+t.keyPoints.map(function(t){return"<li>"+m(t)+"</li>"}).join("")+'</ul><div class="btn-row">'+a+"</div></div>"}).join("");a.innerHTML='<div class="page-head"><h2>📚 教学案例库</h2><p>典型收汇场景，供学员练习填报参考。</p></div><div class="case-grid">'+n+"</div>",a.querySelectorAll("[data-caseto]").forEach(function(t){t.addEventListener("click",function(){p="",c=t.getAttribute("data-caseto"),x("student/new")})})}function J(){const e=t.FLOW_STEPS.map(function(t){return'<div class="flow-step"><div class="flow-dot">'+t.no+'</div><div class="flow-body"><div class="ft">'+t.no+". "+m(t.title)+'</div><div class="fd">'+m(t.desc)+'</div><div class="fa">▸ 责任方：'+m(t.actor)+"</div></div></div>"}).join(""),n='<ul class="kp">'+t.COMMON_MISTAKES.map(function(t){return"<li>"+m(t)+"</li>"}).join("")+"</ul>",d=t.GLOSSARY.map(function(t){return'<div class="kv"><dt>'+m(t.term)+"</dt><dd>"+m(t.def)+"</dd></div>"}).join(""),l=t.DECL_RULES.map(function(t){var e=t.narrativeTpl?'<div class="rule-tpl">附言格式：<code>'+m(t.narrativeTpl)+"</code></div>":"",a='<ul class="kp">'+t.points.map(function(t){return"<li>"+m(t)+"</li>"}).join("")+"</ul>";return'<div class="rule-card"><div class="rule-title">'+m(t.code?t.code+" · "+t.title:t.title)+"</div>"+e+a+"</div>"}).join("");a.innerHTML='<div class="page-head"><h2>🧭 流程指引与帮助</h2><p>理解从境外汇款到申报完成的关键环节，以及常见填报错误。</p></div><div class="card"><h3>涉外收入申报流程</h3><div class="flow">'+e+'</div></div><div class="card"><h3>📋 申报规则（一线实操要点）</h3>'+l+'</div><div class="card"><h3>⚠️ 常见填报错误</h3>'+n+'</div><div class="card"><h3>📖 关键术语</h3>'+d+"</div>"}function $(t){const n=e.getAllDeclarations(),d=document.getElementById("qDateFrom"),l=document.getElementById("qDateTo"),s=d&&d.value?d.value:"2026-07-01",c=l&&l.value?l.value:"2026-07-26";let r="student"===i.role?n.filter(function(t){return t.studentId===i.id||!0===t.isSeed}):n;t.filterFn&&(r=r.filter(t.filterFn)),r=r.filter(function(t){const e=t.fields.date||"";return!(s&&e&&e<s)&&!(c&&e&&e>c)});let u="";if(u+='<div class="page-title">'+m(t.title)+'<span class="req-star">✱</span></div>',u+='<div class="breadcrumb">当前位置：<span class="bc-current">'+m(t.breadcrumb)+"</span></div>",u+='<div class="filter-bar"><label>收付汇日期</label><input type="date" id="qDateFrom" value="'+s+'" /><span class="sep">到</span><input type="date" id="qDateTo" value="'+c+'" /><label style="margin-left:8px;">笔数和金额(S)</label><input type="text" id="qAmount" placeholder="" style="width:70px;" /><button class="btn-query" id="btnQQuery">查询(Q)</button><button class="btn-export" id="btnQExport">导出(E)</button></div>',u+='<div class="data-table-wrap"><table class="data-table"><thead><tr><th>序号</th><th>申报号码</th><th>银行业务编号</th><th>申报日期</th><th>收款人名称</th><th>收款人代码</th><th>付款人名称</th><th>收入款币种代码</th><th>收入金额</th><th>状态</th></tr></thead><tbody>',r.length){const t=(o-1)*f;r.slice(t,t+f).forEach(function(e,a){u+='<tr class="query-row-clickable" data-decl-id="'+e.id+'"><td class="col-index">'+(t+a+1)+"</td><td>"+m(e.declNo)+"</td><td>"+m(e.fields.bankBizNo||"-")+"</td><td>"+m(e.fields.date||"-")+"</td><td>"+m(e.fields.payeeName)+"</td><td>"+m(e.fields.payeeCode)+"</td><td>"+m(e.fields.payerName)+"</td><td>"+m(e.fields.currency)+"</td><td>"+m(e.fields.amount)+'</td><td><span class="status-tag status-'+e.status+'" style="cursor:pointer;text-decoration:underline;">'+("approved"===e.status?"已通过":"pending"===e.status?"已提交":"returned"===e.status?"已退回":e.status)+"</span></td></tr>"})}else u+='<tr><td colspan="10" style="padding:40px;color:#999;">'+m(t.emptyMsg||"暂无数据")+"</td></tr>";u+="</tbody></table></div>";const p=Math.max(1,Math.ceil(r.length/f)),v=p>1?Math.round(o/p*100):100;u+='<div class="query-progress"><div class="query-progress-bar" style="width:'+v+'%;"></div></div>',u+='<div class="pagination"><span class="page-info">第 '+o+' 页</span><button class="page-btn" id="pgFirst"'+(o<=1?" disabled":"")+'>首页</button><button class="page-btn" id="pgPrev"'+(o<=1?" disabled":"")+'>上一页</button><button class="page-btn" id="pgNext"'+(o>=p?" disabled":"")+'>下一页</button><button class="page-btn" id="pgLast"'+(o>=p?" disabled":"")+">尾页</button></div>",a.innerHTML=u,k("btnQQuery").addEventListener("click",function(){o=1,A()}),k("btnQExport").addEventListener("click",function(){alert("导出功能（教学演示模式）：将当前查询结果导出为 Excel 文件。")}),k("pgFirst")&&k("pgFirst").addEventListener("click",function(){o>1&&(o=1,A())}),k("pgPrev")&&k("pgPrev").addEventListener("click",function(){o>1&&(o--,A())}),k("pgNext")&&k("pgNext").addEventListener("click",function(){o<p&&(o++,A())}),k("pgLast")&&k("pgLast").addEventListener("click",function(){o<p&&(o=p,A())}),document.querySelectorAll(".query-row-clickable").forEach(function(t){t.addEventListener("click",function(){var t=this.getAttribute("data-decl-id");t&&(b=t,U(t))}),t.style.cursor="pointer"})}function tt(){o=1,$({title:"涉外收入已申报(待审核)信息查询",breadcrumb:"申报单管理->涉外收入申报单->已申报(待审核)信息查询",filterFn:function(t){return"pending"===t.status},emptyMsg:"暂无待审核的涉外收入申报记录。"})}function et(){o=1,$({title:"涉外收入已申报(已审核)信息查询",breadcrumb:"申报单管理->涉外收入申报单->已申报(已审核)信息查询",filterFn:function(t){return"approved"===t.status},emptyMsg:"暂无已审核通过的涉外收入申报记录。"})}function at(){o=1,$({title:"涉外收入已删除申报单查询",breadcrumb:"申报单管理->涉外收入申报单->已删除申报单查询",filterFn:function(t){return"returned"===t.status},emptyMsg:"暂无已删除/退回的涉外收入申报记录。"})}function nt(){o=1,a.innerHTML='<div class="page-title">境内收入已申报(待审核)信息查询<span class="req-star">✱</span></div><div class="breadcrumb">当前位置：<span class="bc-current">申报单管理->境内收入申报单->已申报(待审核)信息查询</span></div><div class="filter-bar"><label>收付汇日期</label><input type="date" /><span class="sep">到</span><input type="date" /><label style="margin-left:8px;">笔数和金额(S)</label><input type="text" style="width:70px;" /><button class="btn-query">查询(Q)</button><button class="btn-export">导出(E)</button></div><div class="card"><div class="empty" style="padding:60px 0;">境内收入申报功能教学中暂不涉及。<br/>本系统聚焦于<strong>涉外收入申报</strong>实训。</div></div>'}function dt(){o=1,a.innerHTML='<div class="page-title">境内收入已申报(已审核)信息查询<span class="req-star">✱</span></div><div class="breadcrumb">当前位置：<span class="bc-current">申报单管理->境内收入申报单->已申报(已审核)信息查询</span></div><div class="filter-bar"><label>收付汇日期</label><input type="date" /><span class="sep">到</span><input type="date" /><label style="margin-left:8px;">笔数和金额(S)</label><input type="text" style="width:70px;" /><button class="btn-query">查询(Q)</button><button class="btn-export">导出(E)</button></div><div class="card"><div class="empty" style="padding:60px 0;">境内收入申报功能教学中暂不涉及。<br/>本系统聚焦于<strong>涉外收入申报</strong>实训。</div></div>'}function lt(){o=1,a.innerHTML='<div class="page-title">境内收入已删除申报单查询<span class="req-star">✱</span></div><div class="breadcrumb">当前位置：<span class="bc-current">申报单管理->境内收入申报单->已删除申报单查询</span></div><div class="filter-bar"><label>收付汇日期</label><input type="date" /><span class="sep">到</span><input type="date" /><label style="margin-left:8px;">笔数和金额(S)</label><input type="text" style="width:70px;" /><button class="btn-query">查询(Q)</button><button class="btn-export">导出(E)</button></div><div class="card"><div class="empty" style="padding:60px 0;">境内收入申报功能教学中暂不涉及。<br/>本系统聚焦于<strong>涉外收入申报</strong>实训。</div></div>'}function st(){o=1,a.innerHTML='<div class="page-title">业务工单处理<span class="req-star">✱</span></div><div class="breadcrumb">当前位置：<span class="bc-current">申报单管理->涉外/境内收入申报单->业务工单处理</span></div><div class="card"><div class="empty" style="padding:60px 0;">业务工单处理功能教学中暂不涉及。<br/>真实系统中用于处理银行端推送的异常工单。</div></div>'}function it(t){var e=(t||"").trim(),a=document.getElementById("wmLayer");a||((a=document.createElement("div")).id="wmLayer",a.className="wm-layer",document.body.appendChild(a));for(var n=e?"财务多多 · 授权给"+e:"财务多多",d="",l=0;l<60;l++)d+="<span>"+n+"</span>";a.innerHTML=d;var s=document.getElementById("wmBadge");s||((s=document.createElement("div")).id="wmBadge",s.className="wm-badge",document.body.appendChild(s)),s.textContent=e?"授权学员："+e:"财务多多 专属";var i=document.getElementById("wmCopy");i||((i=document.createElement("div")).id="wmCopy",i.className="wm-copy",document.body.appendChild(i)),i.textContent="© 财务多多 · 收汇申报教学系统 · 未经授权禁止传播"}function ct(){e.seedSampleData(),e.storageAvailable()||E(),i?(C(),A()):w(),window.addEventListener("hashchange",function(){i&&A()})}var rt=!1;try{rt="1"===localStorage.getItem("FX_UNLOCK")}catch(t){}if(rt){var ot="";try{ot=localStorage.getItem("FX_STUDENT")||""}catch(t){}it(ot),ct()}else!function(t){var e=document.createElement("div");e.className="gate-mask",e.id="gateMask";var a=new URLSearchParams(location.search).get("stu")||"";e.innerHTML='<div class="gate-box"><div class="gate-logo">财务多多</div><div class="gate-sub">收汇申报教学系统 · 学员专属入口</div><div class="gate-field"><label>学习码</label><input id="gateCode" type="password" placeholder="请输入学习码" autocomplete="off"></div><div class="gate-field"><label>学员姓名（专属授权，选填）</label><input id="gateName" type="text" placeholder="如：张三" value="'+m(a)+'"></div><button class="gate-btn" id="gateSubmit">进入系统</button><div class="gate-err" id="gateErr"></div><div class="gate-tip">本系统仅限财务多多学员使用，请勿外传学习码。</div></div>',document.body.appendChild(e);var n=document.getElementById("gateCode"),d=document.getElementById("gateName"),l=document.getElementById("gateErr"),s=function(){if("财务多多888"===n.value.trim()){try{localStorage.setItem("FX_UNLOCK","1"),localStorage.setItem("FX_STUDENT",d.value.trim())}catch(t){}it(d.value.trim()),e.remove(),t()}else l.textContent="学习码不正确，请向财务多多老师获取。",n.value="",n.focus()};document.getElementById("gateSubmit").addEventListener("click",s),n.addEventListener("keydown",function(t){"Enter"===t.key&&s()}),n.focus()}(ct)}();</script>
+</body>
+</html>

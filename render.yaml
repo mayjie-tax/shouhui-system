@@ -1,0 +1,9 @@
+# Render 部署配置（收汇申报教学系统 · 纯静态版）
+# 推送到 GitHub 后，在 Render 选择 "New" -> "Blueprint" 即可一键识别本文件。
+services:
+  - type: web
+    name: shouhui-declaration
+    runtime: static
+    plan: free
+    # 整个仓库就是网站内容，入口是 index.html
+    staticPublishPath: .
